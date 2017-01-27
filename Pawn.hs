@@ -2,16 +2,19 @@
 module Pawn where
 
 import Chess
+import Square
 
 pawnMoves :: Piece -> Square -> [Square]
-pawnMoves (Piece White Pawn) (col, 2)   = 
-    valids [(col, 4), (col, 3), (pred col, 3), (succ col, 3)]
-pawnMoves (Piece White Pawn) (col, row) = 
-    valids [(col, succ row), (pred col, succ row), (succ col, succ row)]
-pawnMoves (Piece Black Pawn) (col, 7) = 
-    valids [(col, 5), (col, 6), (pred col, 6), (succ col, 6)]
-pawnMoves (Piece Black Pawn) (col, row) = 
-    valids [(col, pred row), (pred col, pred row), (succ col, pred row)]
+pawnMoves (Piece White Pawn) sqr@(col, 2) = 
+    valids [neighbor North sqr
+            , neighbor NorthWest sqr 
+            , neighbor NorthEast sqr]
+            ++ [(col, 4) | row sqr == 2]
+pawnMoves (Piece Black Pawn) sqr@(col, 7) = 
+    valids [neighbor South sqr
+            , neighbor SouthWest sqr
+            , neighbor SouthEast sqr]
+            ++ [(col, 5) | row sqr == 7]
 pawnMoves (Piece _ _) _ = undefined
 
 valids = filter (\(x, y) -> elem x rows && elem y columns)

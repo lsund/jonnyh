@@ -13,10 +13,6 @@ data Color  = Black | White deriving (Show)
 
 data Piece = Piece Color Type deriving (Show)
 
-newtype Board = Board [Square] deriving (Show)
-
-type Square = (Char, Int)
-
 rows :: String
 rows = ['a'..'h']
 

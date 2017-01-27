@@ -2,7 +2,10 @@
 module Main where
 
 import Pawn (pawnMoves)
+import Bishop (bishopMoves)
 import Chess
+import Board
+import Square
 
 board :: Board
 board = Board [(x, y) | x <- rows, y <- columns]
