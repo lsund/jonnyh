@@ -2,11 +2,12 @@
 module Main where
 
 import Piece
-import Board
 import Square
+import Board
+import Moves
 
 board :: Board
-board = Board [Square x y | x <- columns, y <- rows]
+board = Board [Square x y Nothing | x <- files, y <- ranks]
 
 main = return ()
 
