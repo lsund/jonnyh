@@ -3,8 +3,6 @@ module Square where
 
 import Data.Char
 
-import Chess
-
 data Square = Square {
       column :: Char
     , row    :: Int
@@ -21,6 +19,12 @@ data Direction  = North
                 | SouthWest
                 | West
                 | NorthWest
+
+rows :: [Int]
+rows = [1..8]
+
+columns :: String
+columns = ['a'..'h']
 
 inDirection :: Direction -> Square -> Int -> Square
 inDirection dir (Square col row) n = 
