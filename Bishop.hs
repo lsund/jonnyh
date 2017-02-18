@@ -4,12 +4,10 @@ module Bishop where
 import Chess
 import Square
 
-bishopMoves :: Piece -> Square -> [Square]
-bishopMoves (Piece White Bishop) sqr = undefined
-
---
--- getDiagonal :: Square -> [Square]
--- getDiagonal sqr = 
-    -- let
-        -- tlDiagonal = sqr : 
+bishopMoves :: Square -> [Square]
+bishopMoves sqr =
+        sequenceInDirection sqr NorthEast
+    ++  sequenceInDirection sqr SouthEast
+    ++  sequenceInDirection sqr SouthWest
+    ++  sequenceInDirection sqr NorthWest
 

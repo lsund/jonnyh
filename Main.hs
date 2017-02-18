@@ -8,10 +8,10 @@ import Board
 import Square
 
 board :: Board
-board = Board [(x, y) | x <- rows, y <- columns]
+board = Board [Square x y | x <- columns, y <- rows]
 
 moves :: Piece -> Square -> [Square]
-moves piece@(Piece clr Pawn) sqr   = pawnMoves piece sqr
-moves piece@(Piece clr Bishop) sqr = bishopMoves piece sqr
+moves piece@(Piece _ Pawn) sqr   = pawnMoves piece sqr
+moves piece@(Piece _ Bishop) sqr = bishopMoves sqr
 
 main = return ()

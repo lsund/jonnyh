@@ -1,7 +1,17 @@
 
 module Square where
 
-type Square = (Char, Int)
+import Data.Char
+
+import Chess
+
+data Square = Square {
+      column :: Char
+    , row    :: Int
+}
+
+instance Show Square where
+    show (Square c r) = c : [intToDigit r]
 
 data Direction  = North
                 | NorthEast
@@ -12,31 +22,31 @@ data Direction  = North
                 | West
                 | NorthWest
 
-column :: Square -> Char
-column = fst
-
-row :: Square -> Int
-row = snd
-
-neighbor :: Direction -> Square -> Square
-neighbor = inDirection 1
-
-inDirection :: Int -> Direction -> Square -> Square
-inDirection n dir (col, row) = 
+inDirection :: Direction -> Square -> Int -> Square
+inDirection dir (Square col row) n = 
     case dir of 
-        North     -> (col, nNorth)
-        NorthEast -> (nEast, nNorth)
-        East      -> (nEast, row)
-        SouthEast -> (nEast, nSouth)
-        South     -> (col, nSouth)
-        SouthWest -> (nWest, nSouth)
-        West      -> (nWest, row)
-        NorthWest -> (nWest, nNorth)
+        North     -> Square col nNorth
+        NorthEast -> Square nEast nNorth
+        East      -> Square nEast row
+        SouthEast -> Square nEast nSouth
+        South     -> Square col nSouth
+        SouthWest -> Square nWest nSouth
+        West      -> Square nWest row
+        NorthWest -> Square nWest nNorth
     where 
         nNorth    = iterate succ row !! n
         nEast     = iterate succ col !! n
         nSouth    = iterate pred row !! n
         nWest     = iterate pred col !! n
 
-            
+valids :: [Square] -> [Square]
+valids = filter valid
+
+valid :: Square -> Bool
+valid (Square x y) = elem x columns && elem y rows
+
+sequenceInDirection :: Square -> Direction -> [Square]
+sequenceInDirection sqr dir = 
+    let diag = foldl (\xs n -> inDirection dir sqr n : xs) [] [1..8]
+    in (takeWhile valid . reverse) diag 
 

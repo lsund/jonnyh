@@ -13,9 +13,9 @@ data Color  = Black | White deriving (Show)
 
 data Piece = Piece Color Type deriving (Show)
 
-rows :: String
-rows = ['a'..'h']
+rows :: [Int]
+rows = [1..8]
 
-columns :: [Int]
-columns = [1..8]
+columns :: String
+columns = ['a'..'h']
 
