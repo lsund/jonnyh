@@ -12,7 +12,8 @@ data Square = Square {
 }
 
 instance Show Square where
-    show (Square f r c) = f : [intToDigit r]
+    show (Square f r Nothing) = f : intToDigit r : "[ ]"
+    show (Square f r _)       = f : intToDigit r : "[x]"
 
 data Direction  = North
                 | NorthEast
