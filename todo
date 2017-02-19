@@ -1,0 +1,3 @@
+No efficient way to move to the next square
+
+squares need to hold references to neighbours or something

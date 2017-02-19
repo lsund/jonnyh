@@ -15,6 +15,9 @@ instance Show Square where
     show (Square f r Nothing) = f : intToDigit r : "[ ]"
     show (Square f r _)       = f : intToDigit r : "[x]"
 
+instance Eq Square where
+    (Square f r _) == (Square f' r' _) = f == f' && r == r'
+
 data Direction  = North
                 | NorthEast
                 | East
