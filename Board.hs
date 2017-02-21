@@ -50,8 +50,11 @@ findSquare sqr (Board sqrs) = find (== sqr) sqrs
 valids :: [Maybe Square] -> [Square]
 valids msqrs = map fromJust $ filter isJust msqrs
 
-squareInDirection :: Direction -> Square -> Int -> Board -> Maybe Square
-squareInDirection dir (Square f r c) n board = 
+at :: Char -> Int -> Board -> Maybe Square
+at f r = findSquare (Square f r Nothing)
+
+relative :: Square -> Int -> Board -> Direction -> Maybe Square
+relative (Square f r c) n board dir = 
     case dir of 
         North     -> findSquare (Square f       nNorth  c) board
         NorthEast -> findSquare (Square nEast   nNorth  c) board
@@ -73,16 +76,16 @@ freeInDirection sqr dir board =
     in reverse $ takeWhile empty (reverse reverseSeq)
     where
         nth xs n = 
-            case squareInDirection dir sqr n board of
+            case relative sqr n board dir of
                 Just sqr -> sqr : xs
                 Nothing -> [] ++ xs
 
-squaresInDirection :: Square -> Direction -> Board -> [Square]
-squaresInDirection sqr dir board = 
+inDirection :: Square ->Board -> Direction -> [Square]
+inDirection sqr board dir = 
     let frees = freeInDirection sqr dir board
     in frees ++ nextIfExist frees dir board
     where
         nextIfExist seq dir board
             | null seq               = []
-            | otherwise              = [fromJust (squareInDirection dir sqr 1 board)]
+            | otherwise              = [fromJust (relative sqr 1 board dir)]
 

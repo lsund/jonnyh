@@ -1,26 +1,28 @@
 
-module Moves (moves) where
+module Moves where
 
 import Piece
 import Square
 import Board
 
+import Data.Maybe
+
 pawnMoves :: Square -> Board -> [Square]
-pawnMoves sqr@(Square file 2 piece@(Just (Piece White Pawn))) board = 
+pawnMoves sqr@(Square f 2 piece@(Just (Piece White Pawn))) board = 
     valids  (
-            [   squareInDirection North sqr 1 board
-            ,   squareInDirection NorthWest sqr 1  board
-            ,   squareInDirection NorthEast sqr 1 board
-            ] ++ [Just (Square file 4 piece) | _rank sqr == 2]
+            [   relative sqr 1 board North
+            ,   relative sqr 1  board NorthWest 
+            ,   relative sqr 1 board NorthEast 
+            ] ++ [at f 4 board | _rank sqr == 2]
             )
-pawnMoves sqr@(Square file 7 piece@(Just (Piece Black Pawn))) board = 
+pawnMoves sqr@(Square f 7 piece@(Just (Piece Black Pawn))) board = 
     valids  (
-            [   squareInDirection South sqr 1 board
-            ,   squareInDirection SouthWest sqr 1 board
-            ,   squareInDirection SouthEast sqr 1 board
-            ] ++ [Just (Square file 5 piece) | _rank sqr == 7]
+            [   relative sqr 1 board South 
+            ,   relative sqr 1 board SouthWest 
+            ,   relative sqr 1 board SouthEast
+            ] ++ [at f 5 board | _rank sqr == 7]
             )
-pawnMoves _ _ = undefined
+pawnMoves _ _ = error "tbi"
 
 bishopMoves :: Square -> Board -> [Square]
 bishopMoves sqr board =
@@ -29,7 +31,7 @@ bishopMoves sqr board =
     ++  bishopMove SouthWest
     ++  bishopMove NorthWest
     where
-        bishopMove dir = squaresInDirection sqr dir board
+        bishopMove = inDirection sqr board
 
 knightMoves :: Square -> Board ->[Square]
 knightMoves sqr board =
@@ -44,22 +46,18 @@ knightMoves sqr board =
             ]
     where 
         knightMove dir1 dir2 =
-            case squareInDirection dir2 sqr 1 board of
+            case relative sqr 1 board dir2 of
                 Nothing  -> Nothing
-                Just sqr -> squareInDirection dir1 sqr 2 board
+                Just sqr -> relative sqr 2 board dir1
     
 apply :: (Direction -> [Square]) -> [Direction] -> [Square]
 apply f = foldr ((++) . f) []
 
 rookMoves :: Square -> Board -> [Square]
-rookMoves sqr board =
-        rookMove North
-    ++  rookMove East
-    ++  rookMove South
-    ++  rookMove West
+rookMoves sqr board = f
     where
         f = apply rookMove [North, East, South, West]
-        rookMove dir = squaresInDirection sqr dir board 
+        rookMove = inDirection sqr board
 
 queenMoves :: Square -> Board -> [Square]
 queenMoves sqr board = 
@@ -77,13 +75,16 @@ kingMoves sqr board =
             ,   kingMove NorthWest
             ]
     where
-        kingMove dir = squareInDirection dir sqr 1 board
+        kingMove = relative sqr 1 board
 
-moves :: Piece -> Square -> Board -> [Square]
-moves piece@(Piece _ Pawn)   = pawnMoves
-moves piece@(Piece _ Bishop) = bishopMoves
-moves piece@(Piece _ Knight) = knightMoves
-moves piece@(Piece _ Rook)   = rookMoves
-moves piece@(Piece _ Queen)  = queenMoves
-moves piece@(Piece _ King)   = kingMoves
+moves :: Char -> Int -> Board -> [Square]
+moves f r board = 
+    case at f r board of
+        Just (sqr@(Square _ _ (Just (Piece _ Pawn))))   -> pawnMoves sqr board
+        Just (sqr@(Square _ _ (Just (Piece _ Bishop)))) -> bishopMoves sqr board
+        Just (sqr@(Square _ _ (Just (Piece _ Knight)))) -> knightMoves sqr board
+        Just (sqr@(Square _ _ (Just (Piece _ Rook))))   -> rookMoves sqr board
+        Just (sqr@(Square _ _ (Just (Piece _ Queen))))  -> queenMoves sqr board
+        Just (sqr@(Square _ _ (Just (Piece _ King))))   -> kingMoves sqr board
+        Nothing -> []
 
