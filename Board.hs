@@ -5,13 +5,30 @@ import Data.List.Split
 import Data.List
 import Data.Maybe
 
+import Direction
 import Square
 import Piece
 
-newtype Board = Board { _squares :: [Square] } deriving (Show)
+newtype Board = Board { _squares :: [Square] }
 
+ranks board = ranks' $ _squares board  
+    where
+        ranks' sqrs       = map (`ofRank` sqrs) [1..8]
+        ofRank r          = foldr (\s acc -> consIf (_rank s == r) s acc) []
+        consIf True e acc = e : acc
+        consIf _ _ acc    = acc
+
+instance Show Board where
+    show board = 
+        "   A  B  C  D  E  F  G  H\n" ++
+        concat numln
+        where
+            rs = ranks initialBoard
+            rsln = reverse $  map ((++ "\n") . concatMap show) rs
+            numln = zipWith (\x ln -> show x ++ " " ++ ln) [8,7..1] rsln
+    
 initialBoard :: Board
-initialBoard = Board $ map initialSquare [(x, y) | x <- files, y <- ranks]
+initialBoard = Board $ map initialSquare [(x, y) | x <- ['a'..'h'], y <- [1..8]]
 
 initialSquare :: (Char, Int) -> Square
 initialSquare ('a', 1) = Square 'a' 1 (Just (Piece White Rook))
@@ -33,12 +50,6 @@ initialSquare ('f', 8) = Square 'f' 8 (Just (Piece Black Bishop))
 initialSquare ('g', 8) = Square 'g' 8 (Just (Piece Black Knight))
 initialSquare ('h', 8) = Square 'h' 8 (Just (Piece Black Rook))
 initialSquare (f, r)   = Square f   r Nothing
-
-ranks :: [Int]
-ranks = [1..8]
-
-files :: String
-files = ['a'..'h']
 
 empty :: Square -> Bool
 empty (Square _ _ Nothing) = True
@@ -82,10 +93,12 @@ freeInDirection sqr dir board =
 
 inDirection :: Square ->Board -> Direction -> [Square]
 inDirection sqr board dir = 
-    let frees = freeInDirection sqr dir board
-    in frees ++ nextIfExist frees dir board
+    let sqrs = freeInDirection sqr dir board
+    in 
+        if not (null sqrs) then
+            next (head sqrs) dir board ++ sqrs
+        else 
+            []
     where
-        nextIfExist seq dir board
-            | null seq               = []
-            | otherwise              = [fromJust (relative sqr 1 board dir)]
+        next sqr dir board = maybeToList $ relative sqr 1 board dir
 

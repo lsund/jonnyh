@@ -1,5 +1,5 @@
-No efficient way to move to the next square
+No efficient way to move to the next square                 []
 
-squares need to hold references to neighbours or something
+squares need to hold references to neighbours or something  [] 
 
-implement rest of pawnnmoves
+implement rest of pawnnmoves                                [done]
