@@ -1,26 +1,25 @@
 
 module Moves where
 
+import Data.Maybe
+
 import Piece
 import Direction
 import Square
 import Board
 
-import Data.Maybe
-import Data.List.Split
-
 pawnMoves :: Square -> Board -> [Square]
 pawnMoves sqr@(Square f r piece@(Just (Piece White Pawn))) board =
     valids $
-        [   relative sqr 1 board North
-        ,   relative sqr 1 board NorthWest 
-        ,   relative sqr 1 board NorthEast 
+        [   neighbor sqr board North
+        ,   neighbor sqr board NorthWest 
+        ,   neighbor sqr board NorthEast 
         ] ++ if r == 2 then [at f 4 board | _rank sqr == 2] else []
 pawnMoves sqr@(Square f r piece@(Just (Piece Black Pawn))) board =
     valids $
-        [   relative sqr 1 board South 
-        ,   relative sqr 1 board SouthWest 
-        ,   relative sqr 1 board SouthEast
+        [   neighbor sqr board South 
+        ,   neighbor sqr board SouthWest 
+        ,   neighbor sqr board SouthEast
         ] ++ if r == 2 then [at f 5 board | _rank sqr == 7] else []
 
 bishopMoves :: Square -> Board -> [Square]
@@ -36,9 +35,9 @@ knightMoves sqr board =
     where
         apply f = foldr (\(x, y) acc -> maybeToList (f x y) ++ acc) []
         knightMove dir1 dir2 =
-            case relative sqr 1 board dir2 of
+            case neighbor sqr board dir2 of
                 Nothing  -> Nothing
-                Just sqr -> relative sqr 2 board dir1
+                Just sqr -> relative 2 sqr board dir1
     
 rookMoves :: Square -> Board -> [Square]
 rookMoves sqr board = apply rookMove fourDirections
@@ -55,7 +54,7 @@ kingMoves sqr board =
     apply kingMove eightDirections
     where
         apply f = foldr (\x acc -> maybeToList (f x) ++ acc) []
-        kingMove = relative sqr 1 board
+        kingMove = neighbor sqr board
 
 moves :: Char -> Int -> Board -> [Square]
 moves f r board = 
@@ -68,8 +67,5 @@ moves f r board =
         Just sqr@(Square _ _ (Just (Piece _ King)))   -> kingMoves sqr board
         Nothing -> []
 
--- move :: Square -> Board -> Board
--- move sqr@(Square f r (Just (Piece _ Pawn))) board =
---     let (x : y : []) = splitWhen (== sqr) (_squares board)
---     in  ( 
-
+move :: Square -> Square -> Board -> Board
+move = swapContent

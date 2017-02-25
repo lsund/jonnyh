@@ -25,6 +25,7 @@ instance Show Square where
     show (Square _ _ (Just (Piece White Rook)))   = "[R]"
     show (Square _ _ (Just (Piece White Queen)))  = "[Q]"
     show (Square _ _ (Just (Piece White King)))   = "[K]"
+    -- show (Square f r _)   = f : show r
 
 instance Eq Square where
     (Square f r _) == (Square f' r' _) = f == f' && r == r'
