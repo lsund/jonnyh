@@ -2,25 +2,29 @@
 module Moves where
 
 import Data.Maybe
+import qualified Data.Map as Map
 
 import Piece
 import Direction
 import Square
 import Board
 
-pawnMoves :: Square -> Board -> [Square]
-pawnMoves sqr@(Square f r piece@(Just (Piece White Pawn))) board =
-    valids $
-        [   neighbor sqr board North
-        ,   neighbor sqr board NorthWest 
-        ,   neighbor sqr board NorthEast 
-        ] ++ if r == 2 then [at f 4 board | _rank sqr == 2] else []
-pawnMoves sqr@(Square f r piece@(Just (Piece Black Pawn))) board =
-    valids $
-        [   neighbor sqr board South 
-        ,   neighbor sqr board SouthWest 
-        ,   neighbor sqr board SouthEast
-        ] ++ if r == 2 then [at f 5 board | _rank sqr == 7] else []
+pawnMoves :: Square -> Color -> Board -> [Square]
+pawnMoves sqr@(Square f r) color board
+    | color == White =
+        valids $
+            [   neighbor sqr board North
+            ,   neighbor sqr board NorthWest 
+            ,   neighbor sqr board NorthEast 
+            ]
+            ++ if r == 2 then [findSquare $ Square f 4 | _rank sqr == 2] else []
+    | color == Black =
+        valids $
+            [   neighbor sqr board South 
+            ,   neighbor sqr board SouthWest 
+            ,   neighbor sqr board SouthEast
+            ]
+            ++ if r == 2 then [findSquare $ Square f 5 | _rank sqr == 7] else []
 
 bishopMoves :: Square -> Board -> [Square]
 bishopMoves sqr board =
@@ -56,16 +60,17 @@ kingMoves sqr board =
         apply f = foldr (\x acc -> maybeToList (f x) ++ acc) []
         kingMove = neighbor sqr board
 
-moves :: Char -> Int -> Board -> [Square]
-moves f r board = 
-    case at f r board of
-        Just sqr@(Square _ _ (Just (Piece _ Pawn)))   -> pawnMoves sqr board
-        Just sqr@(Square _ _ (Just (Piece _ Bishop))) -> bishopMoves sqr board
-        Just sqr@(Square _ _ (Just (Piece _ Knight))) -> knightMoves sqr board
-        Just sqr@(Square _ _ (Just (Piece _ Rook)))   -> rookMoves sqr board
-        Just sqr@(Square _ _ (Just (Piece _ Queen)))  -> queenMoves sqr board
-        Just sqr@(Square _ _ (Just (Piece _ King)))   -> kingMoves sqr board
+moves :: Square -> Board -> [Square]
+moves sqr board = 
+    case Map.lookup sqr $ _pieces board of
+    -- in case squareAt f r board of
+        Just (Piece color Pawn)   -> pawnMoves sqr color board
+        Just (Piece _ Bishop) -> bishopMoves sqr board
+        Just (Piece _ Knight) -> knightMoves sqr board
+        Just (Piece _ Rook)   -> rookMoves sqr board
+        Just (Piece _ Queen)  -> queenMoves sqr board
+        Just (Piece _ King)   -> kingMoves sqr board
         Nothing -> []
 
-move :: Square -> Square -> Board -> Board
-move = swapContent
+-- move :: Square -> Square -> Board -> Board
+-- move = swapContent

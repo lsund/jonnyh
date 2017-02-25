@@ -1,31 +1,36 @@
 
 module Initial where
 
+import qualified Data.Map as Map
+
 import Board
 import Square
 import Piece
 
 initialBoard :: Board
-initialBoard = Board $ map initialSquare [(x, y) | x <- ['a'..'h'], y <- [1..8]]
+initialBoard = 
+    Board [Square f r | f <- ['a'..'h'], r <- [1..8]] initialPieces
 
-initialSquare :: (Char, Int) -> Square
-initialSquare ('a', 1) = Square 'a' 1 (Just (Piece White Rook))
-initialSquare ('b', 1) = Square 'b' 1 (Just (Piece White Knight))
-initialSquare ('c', 1) = Square 'c' 1 (Just (Piece White Bishop))
-initialSquare ('d', 1) = Square 'd' 1 (Just (Piece White Queen))
-initialSquare ('e', 1) = Square 'e' 1 (Just (Piece White King))
-initialSquare ('f', 1) = Square 'f' 1 (Just (Piece White Bishop))
-initialSquare ('g', 1) = Square 'g' 1 (Just (Piece White Knight))
-initialSquare ('h', 1) = Square 'h' 1 (Just (Piece White Rook))
-initialSquare ( f , 2) = Square f   2 (Just (Piece White Pawn))
-initialSquare ( f , 7) = Square f   7 (Just (Piece Black Pawn))
-initialSquare ('a', 8) = Square 'a' 8 (Just (Piece Black Rook))
-initialSquare ('b', 8) = Square 'b' 8 (Just (Piece Black Knight))
-initialSquare ('c', 8) = Square 'c' 8 (Just (Piece Black Bishop))
-initialSquare ('d', 8) = Square 'd' 8 (Just (Piece Black Queen))
-initialSquare ('e', 8) = Square 'e' 8 (Just (Piece Black King))
-initialSquare ('f', 8) = Square 'f' 8 (Just (Piece Black Bishop))
-initialSquare ('g', 8) = Square 'g' 8 (Just (Piece Black Knight))
-initialSquare ('h', 8) = Square 'h' 8 (Just (Piece Black Rook))
-initialSquare (f, r)   = Square f   r Nothing
+initialPieces :: Map Square Piece
+initialPieces = Map.fromList $
+    [
+      (Square 'a' 1, Piece White Rook)
+    , (Square 'b' 1, Piece White Knight)
+    , (Square 'c' 1, Piece White Bishop)
+    , (Square 'd' 1, Piece White Queen)
+    , (Square 'e' 1, Piece White King)
+    , (Square 'f' 1, Piece White Bishop)
+    , (Square 'g' 1, Piece White Knight)
+    , (Square 'h' 1, Piece White Rook)
+    , (Square 'a' 8, Piece Black Rook)
+    , (Square 'b' 8, Piece Black Knight)
+    , (Square 'c' 8, Piece Black Bishop)
+    , (Square 'd' 8, Piece Black Queen)
+    , (Square 'e' 8, Piece Black King)
+    , (Square 'f' 8, Piece Black Bishop)
+    , (Square 'g' 8, Piece Black Knight)
+    , (Square 'h' 8, Piece Black Rook)
+    ]
+    ++ [(Square f 2, Piece White Pawn) | f <- ['a'..'h']]
+    ++ [(Square f 7, Piece Black Pawn) | f <- ['a'..'h']]
 
