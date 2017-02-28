@@ -12,19 +12,19 @@ import Board
 pawnMoves :: Square -> Color -> Board -> [Square]
 pawnMoves sqr@(Square f r) col brd
     | col == White =
-        inBoard $
+        catMaybes $
             [   neighbor sqr brd North
             ,   neighbor sqr brd NorthWest 
             ,   neighbor sqr brd NorthEast 
             ]
-            ++ if r == 2 then [findSquare $ Square f 4 | _rank sqr == 2] else []
+            ++ if r == 2 then [Just $ Square f 4 | _rank sqr == 2] else []
     | col == Black =
-        inBoard $
+        catMaybes $
             [   neighbor sqr brd South 
             ,   neighbor sqr brd SouthWest 
             ,   neighbor sqr brd SouthEast
             ]
-            ++ if r == 2 then [findSquare $ Square f 5 | _rank sqr == 7] else []
+            ++ if r == 7 then [Just $ Square f 5 | _rank sqr == 7] else []
 
 bishopMoves :: Square -> Board -> [Square]
 bishopMoves sqr brd =
@@ -70,7 +70,4 @@ moves sqr brd =
         Just (Piece _ Queen)    -> queenMoves sqr brd
         Just (Piece _ King)     -> kingMoves sqr brd
         Nothing                 -> []
-
-notOccupiedBy :: Color -> Board -> [Square] -> [Square]
-notOccupiedBy col brd = filter (\x -> Just col /= occupiedBy brd x)
 
