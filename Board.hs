@@ -49,6 +49,13 @@ findSquare sqr@(Square f r)
 findPiece :: Square -> Board -> Maybe Piece
 findPiece sqr board = Map.lookup sqr $ _pieces board
 
+occupiedBy :: Board -> Square -> Maybe Color
+occupiedBy board sqr = 
+    case findPiece sqr board of
+        Just (Piece White _) -> Just White
+        Just (Piece Black _) -> Just Black
+        Nothing              -> Nothing
+
 inBoard :: [Maybe Square] -> [Square]
 inBoard msqrs = map fromJust $ filter isJust msqrs
 
@@ -96,8 +103,8 @@ untilOccupied sqr board dir =
 --     where
 --         next sqr dir board = maybeToList $ neighbor sqr board dir
 
-move :: Square -> Square -> Board -> Board
-move sqr sqr' board =
+moveContent :: Square -> Square -> Board -> Board
+moveContent sqr sqr' board =
     let 
         pce = findPiece sqr board
         pce' = findPiece sqr' board

@@ -10,64 +10,67 @@ import Square
 import Board
 
 pawnMoves :: Square -> Color -> Board -> [Square]
-pawnMoves sqr@(Square f r) color board
-    | color == White =
+pawnMoves sqr@(Square f r) col brd
+    | col == White =
         inBoard $
-            [   neighbor sqr board North
-            ,   neighbor sqr board NorthWest 
-            ,   neighbor sqr board NorthEast 
+            [   neighbor sqr brd North
+            ,   neighbor sqr brd NorthWest 
+            ,   neighbor sqr brd NorthEast 
             ]
             ++ if r == 2 then [findSquare $ Square f 4 | _rank sqr == 2] else []
-    | color == Black =
+    | col == Black =
         inBoard $
-            [   neighbor sqr board South 
-            ,   neighbor sqr board SouthWest 
-            ,   neighbor sqr board SouthEast
+            [   neighbor sqr brd South 
+            ,   neighbor sqr brd SouthWest 
+            ,   neighbor sqr brd SouthEast
             ]
             ++ if r == 2 then [findSquare $ Square f 5 | _rank sqr == 7] else []
 
 bishopMoves :: Square -> Board -> [Square]
-bishopMoves sqr board =
+bishopMoves sqr brd =
         apply bishopMove diagDirections
     where
         apply f = foldr ((++) . f) []
-        bishopMove = untilOccupied sqr board
+        bishopMove = untilOccupied sqr brd
 
 knightMoves :: Square -> Board ->[Square]
-knightMoves sqr board =
+knightMoves sqr brd =
             apply knightMove knightDirections
     where
         apply f = foldr (\(x, y) acc -> maybeToList (f x y) ++ acc) []
         knightMove dir1 dir2 =
-            case neighbor sqr board dir2 of
+            case neighbor sqr brd dir2 of
                 Nothing  -> Nothing
-                Just sqr -> relative 2 sqr board dir1
+                Just sqr -> relative 2 sqr brd dir1
     
 rookMoves :: Square -> Board -> [Square]
-rookMoves sqr board = apply rookMove fourDirections
+rookMoves sqr brd = apply rookMove fourDirections
     where
         apply f = foldr ((++) . f) []
-        rookMove = untilOccupied sqr board
+        rookMove = untilOccupied sqr brd
 
 queenMoves :: Square -> Board -> [Square]
-queenMoves sqr board = 
-    bishopMoves sqr board ++ rookMoves sqr board
+queenMoves sqr brd = 
+    bishopMoves sqr brd ++ rookMoves sqr brd
 
 kingMoves :: Square -> Board -> [Square]
-kingMoves sqr board =
+kingMoves sqr brd =
     apply kingMove eightDirections
     where
         apply f = foldr (\x acc -> maybeToList (f x) ++ acc) []
-        kingMove = neighbor sqr board
+        kingMove = neighbor sqr brd
 
 moves :: Square -> Board -> [Square]
-moves sqr board = 
-    case Map.lookup sqr $ _pieces board of
-        Just (Piece color Pawn)   -> pawnMoves sqr color board
-        Just (Piece _ Bishop) -> bishopMoves sqr board
-        Just (Piece _ Knight) -> knightMoves sqr board
-        Just (Piece _ Rook)   -> rookMoves sqr board
-        Just (Piece _ Queen)  -> queenMoves sqr board
-        Just (Piece _ King)   -> kingMoves sqr board
-        Nothing -> []
+moves sqr brd = 
+    case Map.lookup sqr $ _pieces brd of
+        Just (Piece col Pawn)   -> pawnMoves sqr col brd
+        Just (Piece _ Bishop)   -> bishopMoves sqr brd
+        Just (Piece col Knight) -> notOccupiedBy col brd $ knightMoves sqr brd
+        Just (Piece _ Rook)     -> rookMoves sqr brd
+        Just (Piece _ Queen)    -> queenMoves sqr brd
+        Just (Piece _ King)     -> kingMoves sqr brd
+        Nothing                 -> []
+
+notOccupiedBy :: Color -> Board -> [Square] -> [Square]
+notOccupiedBy col brd = filter (\x -> Just col /= occupiedBy brd x)
 
