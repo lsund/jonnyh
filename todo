@@ -2,4 +2,6 @@ No efficient way to move to the next square                 []
 
 squares need to hold references to neighbours or something  [] 
 
+should not be able to move onto own piece                   []
+
 implement rest of pawnnmoves                                [done]

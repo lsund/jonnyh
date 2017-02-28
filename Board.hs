@@ -25,12 +25,10 @@ instance Show Board where
             rs = reverse $ ranks board
             rsRep = concatMap (strRep board)
             rsRep' = map ((++ "\n") . rsRep) rs
-
-strRep :: Board -> Square -> String 
-strRep board sqr =
-    case findPiece sqr board of
-        Just pce -> "[" ++ show pce ++ "]"
-        Nothing  -> "[ ]"
+            strRep board sqr =
+                case findPiece sqr board of
+                    Just pce -> "[" ++ show pce ++ "]"
+                    Nothing  -> "[ ]"
 
 ranks :: Board -> [[Square]]
 ranks board = ranks' $ _squares board  
@@ -40,8 +38,8 @@ ranks board = ranks' $ _squares board
         consIf True e acc = e : acc
         consIf _ _ acc    = acc
 
-empty :: Board -> Square -> Bool
-empty board sqr = isNothing $ Map.lookup sqr $ _pieces board
+hasPiece :: Board -> Square -> Bool
+hasPiece board sqr = isJust $ Map.lookup sqr $ _pieces board
 
 findSquare :: Square -> Maybe Square
 findSquare sqr@(Square f r) 
@@ -51,8 +49,11 @@ findSquare sqr@(Square f r)
 findPiece :: Square -> Board -> Maybe Piece
 findPiece sqr board = Map.lookup sqr $ _pieces board
 
-valids :: [Maybe Square] -> [Square]
-valids msqrs = map fromJust $ filter isJust msqrs
+inBoard :: [Maybe Square] -> [Square]
+inBoard msqrs = map fromJust $ filter isJust msqrs
+
+-- frees :: [Square] -> Board -> [Square]
+-- frees sqrs board = filter (\sqr -> isNothing (findPiece sqr board)) sqrs
 
 relative :: Int -> Square ->  Board -> Direction -> Maybe Square
 relative n (Square f r) board dir = 
@@ -74,43 +75,35 @@ relative n (Square f r) board dir =
 neighbor :: Square -> Board -> Direction -> Maybe Square
 neighbor = relative 1
 
-emptyInDirection :: Square -> Direction -> Board -> [Square]
-emptyInDirection sqr dir board = 
+untilOccupied :: Square -> Board -> Direction -> [Square]
+untilOccupied sqr board dir = 
     let reverseSeq = foldl nth [] [1..8]
-    in reverse $ takeWhile (empty board) (reverse reverseSeq)
+    in reverse $ takeWhile (not . hasPiece board) (reverse reverseSeq)
     where
         nth xs n = 
             case relative n sqr board dir of
                 Just sqr -> sqr : xs
                 Nothing -> [] ++ xs
 
-inDirection :: Square -> Board -> Direction -> [Square]
-inDirection sqr board dir = 
-    let sqrs = emptyInDirection sqr dir board
-    in 
-        if not (null sqrs) then
-            next (head sqrs) dir board ++ sqrs
-        else 
-            []
-    where
-        next sqr dir board = maybeToList $ neighbor sqr board dir
+-- inDirection :: Square -> Board -> Direction -> [Square]
+-- inDirection sqr board dir = 
+--     let sqrs = untilOccupied sqr board dir
+--     in 
+--         if not (null sqrs) then
+--             next (head sqrs) dir board ++ sqrs
+--         else 
+--             []
+--     where
+--         next sqr dir board = maybeToList $ neighbor sqr board dir
 
-indexOf :: Square -> Board -> Int
-indexOf (Square f r) board = (pred fNum * 8) + pred r
-    where fNum = ord f - 96
-
--- swapContent :: Square -> Square -> Board -> Board
--- swapContent sqr@(Square f r) sqr'@(Square f' r') board = 
---     let 
---         ind  = indexOf sqr board
---         before = take ind (_squares board)
---         after  = drop (succ ind) (_squares board)
---         board'  = Board (before ++ [Square f r pce'] ++ after) (_pieces board)
---     in
---         let 
---             ind' = indexOf sqr' board'
---             before' = take ind' (_squares board')
---             after' = drop (succ ind') (_squares board') 
---         in
---             Board (before' ++ [Square f' r' pce] ++ after') Map.empty
+move :: Square -> Square -> Board -> Board
+move sqr sqr' board =
+    let 
+        pce = findPiece sqr board
+        pce' = findPiece sqr' board
+        newmap = Map.delete sqr (_pieces board)
+        newmap' = Map.delete sqr' newmap
+        newmap'' = Map.insert sqr' (fromJust pce) newmap'
+    in
+        Board (_squares board) newmap''
 
