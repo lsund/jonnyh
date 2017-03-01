@@ -9,6 +9,24 @@ import Direction
 import Square
 import Board
 
+type Moves = [Square]
+
+data Play = Play Board Moves
+
+instance Show Play where
+    show (Play board moves) =
+        "   A  B  C  D  E  F  G  H\n" ++
+        concat (zipWith (\x ln -> show x ++ " " ++ ln) [8,7..1] rsRep')
+        where
+            rs = reverse $ ranks board
+            rsRep = concatMap (strRep board)
+            rsRep' = map ((++ "\n") . rsRep) rs
+            strRep board sqr =
+                if sqr `elem` moves then "[x]" else
+                    case occupiedBy sqr board of
+                        Just pce -> "[" ++ show pce ++ "]"
+                        Nothing  -> "[ ]"
+
 pawnMoves :: Square -> Color -> Board -> [Square]
 pawnMoves sqr@(Square f r) col brd
     | col == White =
@@ -63,11 +81,11 @@ kingMoves sqr brd =
 moves :: Square -> Board -> [Square]
 moves sqr brd = 
     case Map.lookup sqr $ _pieces brd of
-        Just (Piece col Pawn)   -> pawnMoves sqr col brd
-        Just (Piece _ Bishop)   -> bishopMoves sqr brd
+        Just (Piece col Pawn)   -> notOccupiedBy col brd $ pawnMoves sqr col brd
+        Just (Piece col Bishop) -> notOccupiedBy col brd $ bishopMoves sqr brd
         Just (Piece col Knight) -> notOccupiedBy col brd $ knightMoves sqr brd
-        Just (Piece _ Rook)     -> rookMoves sqr brd
-        Just (Piece _ Queen)    -> queenMoves sqr brd
-        Just (Piece _ King)     -> kingMoves sqr brd
+        Just (Piece col Rook)   -> notOccupiedBy col brd $ rookMoves sqr brd
+        Just (Piece col Queen)  -> notOccupiedBy col brd $ queenMoves sqr brd
+        Just (Piece col King)   -> notOccupiedBy col brd $ kingMoves sqr brd
         Nothing                 -> []
 

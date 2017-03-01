@@ -18,7 +18,7 @@ data Board = Board {
 }
 
 -------------------------------------------------------------------------------
--- Show
+-- display
 
 instance Show Board where
     show board = 
@@ -44,18 +44,17 @@ ranks board = ranks' $ _squares board
 -------------------------------------------------------------------------------
 -- piece inspection
 
-occupiedBy :: Square -> Board -> Maybe Piece
-occupiedBy sqr board = Map.lookup sqr $ _pieces board
-
 occupied :: Board -> Square -> Bool
 occupied board sqr = isJust $ Map.lookup sqr $ _pieces board
+
+occupiedBy :: Square -> Board -> Maybe Piece
+occupiedBy sqr board = Map.lookup sqr $ _pieces board
 
 occupiedByColor :: Board -> Square -> Maybe Color
 occupiedByColor board sqr = 
     case occupiedBy sqr board of
-        Just (Piece White _) -> Just White
-        Just (Piece Black _) -> Just Black
-        Nothing              -> Nothing
+        Just sqr -> Just (_color sqr)
+        Nothing  -> Nothing
 
 notOccupiedBy :: Color -> Board -> [Square] -> [Square]
 notOccupiedBy col brd = filter (\x -> Just col /= occupiedByColor brd x)
@@ -65,15 +64,8 @@ notOccupiedBy col brd = filter (\x -> Just col /= occupiedByColor brd x)
 
 relative :: Int -> Square ->  Board -> Direction -> Maybe Square
 relative n (Square f r) board dir = 
-    boardSquare $ case dir of 
-        North     -> Square f       nNorth
-        NorthEast -> Square nEast   nNorth
-        East      -> Square nEast   r     
-        SouthEast -> Square nEast   nSouth
-        South     -> Square f       nSouth
-        SouthWest -> Square nWest   nSouth
-        West      -> Square nWest   r     
-        NorthWest -> Square nWest   nNorth
+    boardSquare $ 
+    let (f, r) = cords dir in Square f r
     where 
         nNorth    = iterate succ r !! n
         nEast     = iterate succ f !! n
@@ -82,6 +74,16 @@ relative n (Square f r) board dir =
         boardSquare sqr@(Square f r) 
             | f `elem` ['a'..'h'] && r `elem` [1..8] = Just sqr
             | otherwise                              = Nothing
+        cords dir = 
+            case dir of 
+            North     -> (f    , nNorth)
+            NorthEast -> (nEast, nNorth)
+            East      -> (nEast, r     )
+            SouthEast -> (nEast, nSouth)
+            South     -> (f    , nSouth)
+            SouthWest -> (nWest, nSouth)
+            West      -> (nWest, r     )
+            NorthWest -> (nWest, nNorth)
 
 neighbor :: Square -> Board -> Direction -> Maybe Square
 neighbor = relative 1
@@ -89,10 +91,13 @@ neighbor = relative 1
 -------------------------------------------------------------------------------
 -- get a sequence of squares
 
+takeWhileOneMore :: (a -> Bool) -> [a] -> [a]
+takeWhileOneMore p = foldr (\x ys -> if p x then x : ys else [x]) []
+
 untilOccupied :: Square -> Board -> Direction -> [Square]
 untilOccupied sqr board dir = 
     let reverseSeq = foldl nth [] [1..8]
-    in reverse $ takeWhile (not . occupied board) (reverse reverseSeq)
+    in reverse $ takeWhileOneMore (not . occupied board) (reverse reverseSeq)
     where
         nth xs n = 
             case relative n sqr board dir of
