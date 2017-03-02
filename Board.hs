@@ -1,7 +1,7 @@
 
 module Board where
 
-import Data.List
+import Data.List as List
 import Data.Maybe
 import Data.Char
 import qualified Data.Map as Map
@@ -18,6 +18,18 @@ data Board = Board {
       _squares  :: [Square]
     , _position :: Position
 }
+
+mapTuple :: (a -> b) -> (a, a) -> (b, b)
+mapTuple f (a1, a2) = (f a1, f a2)
+
+evaluate :: Position -> (Int, Int)
+evaluate pos = mapTuple sumPces $ partition isWhite $ exceptKing pos
+    where
+        sumPces = foldr (\pce sum -> Piece.value pce + sum) 0 :: [Piece] -> Int
+        exceptKing pos = filter (not . isKing) $ Map.elems pos
+            where 
+                isKing (Piece _ King) = True
+                isKing _ = False
 
 board :: Position -> Board
 board = Board [Square f r | f <- ['a'..'h'], r <- [1..8]]

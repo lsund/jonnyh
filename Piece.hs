@@ -31,3 +31,14 @@ instance Show Piece where
     show (Piece White King)   = "K"
 
 
+value :: Piece -> Int
+value (Piece _ Pawn)   = 1
+value (Piece _ Bishop) = 3
+value (Piece _ Knight) = 3
+value (Piece _ Rook)   = 5
+value (Piece _ Queen)  = 9
+value _                = undefined
+
+isWhite :: Piece -> Bool
+isWhite (Piece White _) = True
+isWhite _ = False
