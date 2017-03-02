@@ -1,6 +1,8 @@
 
 module GameTree where
 
+import Data.List
+
 import Moves
 import Board
 import Piece
@@ -30,9 +32,26 @@ evaluatedN n brd = fmap (\brd -> (brd, evaluate brd)) (tree n White brd)
 
 newtype MinMax = MinMax [Int]
 
--- instance Ord MinMax where
-    -- compare a b = 
-    -- compare :: MinMax -> MinMax -> Ordering
+-- compares two lists. A list is greater than another list, if the odd elements
+-- compare GT and the even elements compare LT
+compareValues as bs =
+    let 
+        comps = zipWith compare as bs
+        maxs = head comps : every 2 (tail comps)
+        mins = every 2 comps
+        gts = filter (== GT) maxs
+        lts = filter (== LT) mins
 
--- compareMinMax (a : as) (b : bs) n
-    -- | even n =
+        comps' = zipWith compare bs as
+        maxs' = head comps' : every 2 (tail comps')
+        mins' = every 2 comps'
+        gts' = filter (== GT) maxs'
+        lts' = filter (== LT) mins'
+    in 
+        (length gts + length lts) `compare` (length gts' + length lts')
+
+every n xs = 
+    case drop (pred n) xs of
+        (y : ys) -> y : every n ys
+        []       -> []
+
