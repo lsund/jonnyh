@@ -19,14 +19,15 @@ data Board = Board {
     , _position :: Position
 }
 
-evaluate :: Position -> (Int, Int)
-evaluate pos = mapTuple sumPces $ List.partition isWhite $ exceptKing pos
+evaluate :: Board -> (Int, Int)
+evaluate brd = mapTuple sumPces $ List.partition isWhite $ exceptKing pos
     where
         mapTuple f (a1, a2) = (f a1, f a2)
         sumPces = foldr (\pce sum -> Piece.value pce + sum) 0 :: [Piece] -> Int
         exceptKing pos = filter notKing $ Map.elems pos
         notKing = (King /=) . _type
         isWhite = (White ==) . _color
+        pos = _position brd
 
 board :: Position -> Board
 board = Board [Square f r | f <- ['a'..'h'], r <- [1..8]]
