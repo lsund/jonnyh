@@ -19,10 +19,10 @@ data Board = Board {
     , _position :: Position
 }
 
-evaluate :: Board -> (Int, Int)
-evaluate brd = mapTuple sumPces $ List.partition isWhite $ exceptKing pos
+evaluate :: Board -> Int
+evaluate brd = sumPces whites - sumPces blacks
     where
-        mapTuple f (a1, a2) = (f a1, f a2)
+        (whites, blacks) = List.partition isWhite $ exceptKing pos
         sumPces = foldr (\pce sum -> Piece.value pce + sum) 0 :: [Piece] -> Int
         exceptKing pos = filter notKing $ Map.elems pos
         notKing = (King /=) . _type

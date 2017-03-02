@@ -6,7 +6,7 @@ import Board
 import Piece
 
 data Tree a = Node {
-    _content :: a,
+    _content  :: a,
     _children :: [Tree a]
 } deriving (Show)
 
@@ -18,18 +18,21 @@ foldTree :: (a -> b -> b) -> b -> Tree a -> [b]
 foldTree f z (Node x []) = [f x z]
 foldTree f z (Node x ns) = [f x y | n <- ns, y <- foldTree f z n]
 
-singleton :: Board -> Tree Board
-singleton brd = Node brd []
+tree :: Int -> Color -> Board -> Tree Board
+tree 0 col brd = Node brd []
+tree d col brd = Node brd [tree d' col' brd' | brd' <- allPositions col brd]
+    where 
+        d'   = pred d
+        col' = succ col
 
-grow :: Color -> Tree Board -> Tree Board
-grow col (Node brd []) = 
-    Node brd $ map singleton $ allPositions col brd
-grow col (Node brd children) = Node brd $ map (grow $ succ col) children
+evaluatedN :: Int -> Board -> Tree (Board, Int)
+evaluatedN n brd = fmap (\brd -> (brd, evaluate brd)) (tree n White brd)
 
-boardN :: Int -> Board -> Tree Board
-boardN n brd = iterate (grow White) (singleton brd) !! n
+newtype MinMax = MinMax [Int]
 
-valueN :: Int -> Board -> Tree (Int, Int)
-valueN n brd = fmap evaluate (boardN n brd)
+-- instance Ord MinMax where
+    -- compare a b = 
+    -- compare :: MinMax -> MinMax -> Ordering
 
-
+-- compareMinMax (a : as) (b : bs) n
+    -- | even n =
