@@ -80,14 +80,14 @@ allMoves col brd = zip filteredSquares $ map (movesFrom brd) filteredSquares
         filteredSquares = Map.keys filteredMap
         ofColor col (Piece col' _) = col == col'
 
-moveToPosition :: Board -> (Square, Square) -> Position
+moveToPosition :: Board -> (Square, Square) -> Board
 moveToPosition brd (sqr, sqr') = Board.move sqr brd sqr'
 
-movesToPositions :: Board -> (Square, [Square]) -> [Position]
+movesToPositions :: Board -> (Square, [Square]) -> [Board]
 movesToPositions brd (sqr, sqrs) = 
     map (\sqr' -> moveToPosition brd (sqr, sqr')) sqrs
 
-allPositions :: Color -> Board -> [Position]
+allPositions :: Color -> Board -> [Board]
 allPositions col brd =
     let 
         moves = allMoves col brd

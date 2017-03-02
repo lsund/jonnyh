@@ -3,13 +3,21 @@ module Piece where
 
 data Color  = Black | White deriving (Show, Eq)
 
+instance Enum Color where
+    succ White = Black
+    succ Black = White
+    toEnum n | n `mod` 2 == 0 = White
+    toEnum _ = Black
+    fromEnum White = 0
+    fromEnum Black = 1
+
 data Type  = Pawn
            | Bishop
            | Knight
            | Rook
            | Queen
            | King
-            deriving (Show)
+            deriving (Show, Eq)
 
 data Piece = Piece {
       _color :: Color
@@ -40,5 +48,4 @@ value (Piece _ Queen)  = 9
 value _                = undefined
 
 isWhite :: Piece -> Bool
-isWhite (Piece White _) = True
-isWhite _ = False
+isWhite pce = _color pce == White

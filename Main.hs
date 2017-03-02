@@ -8,6 +8,7 @@ import Board
 import Moves
 import Initial
 import Test
+import GameTree
 
 main = return ()
 

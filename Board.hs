@@ -1,7 +1,7 @@
 
 module Board where
 
-import Data.List as List
+import qualified Data.List as List
 import Data.Maybe
 import Data.Char
 import qualified Data.Map as Map
@@ -19,17 +19,14 @@ data Board = Board {
     , _position :: Position
 }
 
-mapTuple :: (a -> b) -> (a, a) -> (b, b)
-mapTuple f (a1, a2) = (f a1, f a2)
-
 evaluate :: Position -> (Int, Int)
-evaluate pos = mapTuple sumPces $ partition isWhite $ exceptKing pos
+evaluate pos = mapTuple sumPces $ List.partition isWhite $ exceptKing pos
     where
+        mapTuple f (a1, a2) = (f a1, f a2)
         sumPces = foldr (\pce sum -> Piece.value pce + sum) 0 :: [Piece] -> Int
-        exceptKing pos = filter (not . isKing) $ Map.elems pos
-            where 
-                isKing (Piece _ King) = True
-                isKing _ = False
+        exceptKing pos = filter notKing $ Map.elems pos
+        notKing = (King /=) . _type
+        isWhite = (White ==) . _color
 
 board :: Position -> Board
 board = Board [Square f r | f <- ['a'..'h'], r <- [1..8]]
@@ -133,15 +130,15 @@ untilOccupied sqr board dir =
 -------------------------------------------------------------------------------
 -- modify board
 
-move :: Square -> Board -> Square -> Position
-move sqr board sqr' =
+move :: Square -> Board -> Square -> Board
+move sqr brd sqr' =
     let 
-        pce = occupiedBy sqr board
-        pce' = occupiedBy sqr' board
-        newmap = Map.delete sqr (_position board)
+        pce = occupiedBy sqr brd
+        pce' = occupiedBy sqr' brd
+        newmap = Map.delete sqr (_position brd)
         newmap' = Map.delete sqr' newmap
         newmap'' = Map.insert sqr' (fromJust pce) newmap'
     in
-        newmap''
+        board newmap''
 
 
