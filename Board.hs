@@ -111,6 +111,15 @@ neighborIfOccupied sqr brd dir =
                 else Nothing
         Nothing -> Nothing
 
+neighborIfNotOccupied :: Square -> Board -> Direction -> Maybe Square
+neighborIfNotOccupied sqr brd dir =
+    case neighbor sqr brd dir of
+        Just sqr -> 
+            if occupied brd sqr 
+                then Nothing
+                else Just sqr
+        Nothing -> Nothing
+
 -------------------------------------------------------------------------------
 -- get a sequence of squares
 

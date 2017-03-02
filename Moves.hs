@@ -65,7 +65,7 @@ movesFrom brd sqr =
     case Map.lookup sqr $ _position brd of
         Just (Piece col pce) -> 
             notOccupiedBy col brd $ case pce of 
-                Pawn   -> pawnMoves sqr col brd
+                Pawn   -> notOccupiedBy (succ col) brd $ pawnMoves sqr col brd
                 Bishop -> bishopMoves sqr brd
                 Knight -> knightMoves sqr brd
                 Rook   -> rookMoves sqr brd
