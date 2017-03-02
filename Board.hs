@@ -12,10 +12,15 @@ import Piece
 
 type Map = Map.Map
 
+type Position = Map Square Piece
+
 data Board = Board { 
-      _squares  :: [Square] 
-    , _pieces   :: Map Square Piece
+      _squares  :: [Square]
+    , _position :: Position
 }
+
+board :: Position -> Board
+board = Board [Square f r | f <- ['a'..'h'], r <- [1..8]]
 
 -------------------------------------------------------------------------------
 -- display
@@ -45,10 +50,10 @@ ranks board = ranks' $ _squares board
 -- piece inspection
 
 occupied :: Board -> Square -> Bool
-occupied board sqr = isJust $ Map.lookup sqr $ _pieces board
+occupied board sqr = isJust $ Map.lookup sqr $ _position board
 
 occupiedBy :: Square -> Board -> Maybe Piece
-occupiedBy sqr board = Map.lookup sqr $ _pieces board
+occupiedBy sqr board = Map.lookup sqr $ _position board
 
 occupiedByColor :: Board -> Square -> Maybe Color
 occupiedByColor board sqr = 
@@ -88,6 +93,15 @@ relative n (Square f r) board dir =
 neighbor :: Square -> Board -> Direction -> Maybe Square
 neighbor = relative 1
 
+neighborIfOccupied :: Square -> Board -> Direction -> Maybe Square
+neighborIfOccupied sqr brd dir =
+    case neighbor sqr brd dir of
+        Just sqr -> 
+            if occupied brd sqr 
+                then Just sqr
+                else Nothing
+        Nothing -> Nothing
+
 -------------------------------------------------------------------------------
 -- get a sequence of squares
 
@@ -107,14 +121,15 @@ untilOccupied sqr board dir =
 -------------------------------------------------------------------------------
 -- modify board
 
-moveContent :: Square -> Square -> Board -> Board
-moveContent sqr sqr' board =
+move :: Square -> Board -> Square -> Position
+move sqr board sqr' =
     let 
         pce = occupiedBy sqr board
         pce' = occupiedBy sqr' board
-        newmap = Map.delete sqr (_pieces board)
+        newmap = Map.delete sqr (_position board)
         newmap' = Map.delete sqr' newmap
         newmap'' = Map.insert sqr' (fromJust pce) newmap'
     in
-        Board (_squares board) newmap''
+        newmap''
+
 

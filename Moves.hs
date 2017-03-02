@@ -9,38 +9,20 @@ import Direction
 import Square
 import Board
 
-type Moves = [Square]
-
-data Play = Play Board Moves
-
-instance Show Play where
-    show (Play board moves) =
-        "   A  B  C  D  E  F  G  H\n" ++
-        concat (zipWith (\x ln -> show x ++ " " ++ ln) [8,7..1] rsRep')
-        where
-            rs = reverse $ ranks board
-            rsRep = concatMap (strRep board)
-            rsRep' = map ((++ "\n") . rsRep) rs
-            strRep board sqr =
-                if sqr `elem` moves then "[x]" else
-                    case occupiedBy sqr board of
-                        Just pce -> "[" ++ show pce ++ "]"
-                        Nothing  -> "[ ]"
-
 pawnMoves :: Square -> Color -> Board -> [Square]
 pawnMoves sqr@(Square f r) col brd
     | col == White =
         catMaybes $
             [   neighbor sqr brd North
-            ,   neighbor sqr brd NorthWest 
-            ,   neighbor sqr brd NorthEast 
+            ,   neighborIfOccupied sqr brd NorthWest 
+            ,   neighborIfOccupied sqr brd NorthEast 
             ]
             ++ if r == 2 then [Just $ Square f 4 | _rank sqr == 2] else []
     | col == Black =
         catMaybes $
             [   neighbor sqr brd South 
-            ,   neighbor sqr brd SouthWest 
-            ,   neighbor sqr brd SouthEast
+            ,   neighborIfOccupied sqr brd SouthWest 
+            ,   neighborIfOccupied sqr brd SouthEast
             ]
             ++ if r == 7 then [Just $ Square f 5 | _rank sqr == 7] else []
 
@@ -78,14 +60,36 @@ kingMoves sqr brd =
         apply f = foldr (\x acc -> maybeToList (f x) ++ acc) []
         kingMove = neighbor sqr brd
 
-moves :: Square -> Board -> [Square]
-moves sqr brd = 
-    case Map.lookup sqr $ _pieces brd of
-        Just (Piece col Pawn)   -> notOccupiedBy col brd $ pawnMoves sqr col brd
-        Just (Piece col Bishop) -> notOccupiedBy col brd $ bishopMoves sqr brd
-        Just (Piece col Knight) -> notOccupiedBy col brd $ knightMoves sqr brd
-        Just (Piece col Rook)   -> notOccupiedBy col brd $ rookMoves sqr brd
-        Just (Piece col Queen)  -> notOccupiedBy col brd $ queenMoves sqr brd
-        Just (Piece col King)   -> notOccupiedBy col brd $ kingMoves sqr brd
-        Nothing                 -> []
+movesFrom :: Board -> Square -> [Square]
+movesFrom brd sqr = 
+    case Map.lookup sqr $ _position brd of
+        Just (Piece col pce) -> 
+            notOccupiedBy col brd $ case pce of 
+                Pawn   -> pawnMoves sqr col brd
+                Bishop -> bishopMoves sqr brd
+                Knight -> knightMoves sqr brd
+                Rook   -> rookMoves sqr brd
+                Queen  -> queenMoves sqr brd
+                King   -> kingMoves sqr brd
+        Nothing             -> []
+
+allMoves :: Color -> Board -> [(Square, [Square])]
+allMoves col brd = zip filteredSquares $ map (movesFrom brd) filteredSquares
+    where
+        filteredMap = Map.filter (ofColor col) $ _position brd
+        filteredSquares = Map.keys filteredMap
+        ofColor col (Piece col' _) = col == col'
+
+moveToPosition :: Board -> (Square, Square) -> Position
+moveToPosition brd (sqr, sqr') = Board.move sqr brd sqr'
+
+movesToPositions :: Board -> (Square, [Square]) -> [Position]
+movesToPositions brd (sqr, sqrs) = 
+    map (\sqr' -> moveToPosition brd (sqr, sqr')) sqrs
+
+allPositions :: Color -> Board -> [Position]
+allPositions col brd =
+    let 
+        moves = allMoves col brd
+    in concatMap (movesToPositions brd) moves
 
