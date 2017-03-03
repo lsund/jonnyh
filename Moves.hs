@@ -9,6 +9,9 @@ import Direction
 import Square
 import Board
 
+-------------------------------------------------------------------------------
+-- piece moves
+
 pawnMoves :: Square -> Color -> Board -> [Square]
 pawnMoves sqr@(Square f r) col brd
     | col == White =
@@ -60,6 +63,9 @@ kingMoves sqr brd =
         apply f = foldr (\x acc -> maybeToList (f x) ++ acc) []
         kingMove = neighbor sqr brd
 
+-------------------------------------------------------------------------------
+-- Moves from a square
+
 movesFrom :: Board -> Square -> [Square]
 movesFrom brd sqr = 
     case Map.lookup sqr $ _position brd of
@@ -73,23 +79,13 @@ movesFrom brd sqr =
                 King   -> kingMoves sqr brd
         Nothing             -> []
 
+-------------------------------------------------------------------------------
+-- all legal moves after one move of the given color in the given board
+
 allMoves :: Color -> Board -> [(Square, [Square])]
 allMoves col brd = zip filteredSquares $ map (movesFrom brd) filteredSquares
     where
         filteredMap = Map.filter (ofColor col) $ _position brd
         filteredSquares = Map.keys filteredMap
         ofColor col (Piece col' _) = col == col'
-
-moveToPosition :: Board -> (Square, Square) -> Board
-moveToPosition brd (sqr, sqr') = Board.move sqr brd sqr'
-
-movesToPositions :: Board -> (Square, [Square]) -> [Board]
-movesToPositions brd (sqr, sqrs) = 
-    map (\sqr' -> moveToPosition brd (sqr, sqr')) sqrs
-
-allPositions :: Color -> Board -> [Board]
-allPositions col brd =
-    let 
-        moves = allMoves col brd
-    in concatMap (movesToPositions brd) moves
 

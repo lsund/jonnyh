@@ -9,6 +9,7 @@ import qualified Data.Map as Map
 import Direction
 import Square
 import Piece
+import Util
 
 type Map = Map.Map
 
@@ -105,21 +106,11 @@ neighbor = relative 1
 
 neighborIfOccupied :: Square -> Board -> Direction -> Maybe Square
 neighborIfOccupied sqr brd dir =
-    case neighbor sqr brd dir of
-        Just sqr -> 
-            if occupied brd sqr 
-                then Just sqr
-                else Nothing
-        Nothing -> Nothing
+    neighbor sqr brd dir >>= wrapIf (occupied brd)
 
 neighborIfNotOccupied :: Square -> Board -> Direction -> Maybe Square
 neighborIfNotOccupied sqr brd dir =
-    case neighbor sqr brd dir of
-        Just sqr -> 
-            if occupied brd sqr 
-                then Nothing
-                else Just sqr
-        Nothing -> Nothing
+    neighbor sqr brd dir >>= wrapIf (not . occupied brd)
 
 -------------------------------------------------------------------------------
 -- get a sequence of squares
@@ -150,5 +141,4 @@ move sqr brd sqr' =
         newmap'' = Map.insert sqr' (fromJust pce) newmap'
     in
         board newmap''
-
 

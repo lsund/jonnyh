@@ -6,6 +6,7 @@ import Data.List
 import Moves
 import Board
 import Piece
+import NextBoard
 
 data Tree a = Node {
     _content  :: a,
@@ -22,7 +23,7 @@ foldTree f z (Node x ns) = [f x y | n <- ns, y <- foldTree f z n]
 
 tree :: Int -> Color -> Board -> Tree Board
 tree 0 col brd = Node brd []
-tree d col brd = Node brd [tree d' col' brd' | brd' <- allPositions col brd]
+tree d col brd = Node brd [tree d' col' brd' | brd' <- allPositions brd col]
     where 
         d'   = pred d
         col' = succ col
