@@ -30,28 +30,28 @@ tree d col brd = Node brd [tree d' col' brd' | brd' <- allPositions col brd]
 evaluatedN :: Int -> Board -> Tree (Board, Int)
 evaluatedN n brd = fmap (\brd -> (brd, evaluate brd)) (tree n White brd)
 
-newtype MinMax = MinMax [Int]
+intToOrd :: Int -> Ordering
+intToOrd n 
+    | n < 0     = LT
+    | n > 0     = GT
+    | otherwise = EQ
 
--- compares two lists. A list is greater than another list, if the odd elements
--- compare GT and the even elements compare LT
-compareValues as bs =
-    let 
-        comps = zipWith compare as bs
-        maxs = head comps : every 2 (tail comps)
-        mins = every 2 comps
-        gts = filter (== GT) maxs
-        lts = filter (== LT) mins
+compareValues :: [Int] -> [Int] -> Ordering
+compareValues as bs = intToOrd $ compareValues' as bs 0
+    where
+        compareValues' [] [] n = 0
+        compareValues' (a : as) (b : bs) n 
+            | even n = 
+                case compare a b of
+                    GT -> succ $ compareValues' as bs (succ n)
+                    LT -> pred $ compareValues' as bs (succ n)
+                    EQ -> compareValues' as bs $ succ n
+            | odd n = 
+                case compare a b of
+                    GT -> pred $ compareValues' as bs (succ n)
+                    LT -> succ $ compareValues' as bs (succ n)
+                    EQ -> compareValues' as bs (succ n)
 
-        comps' = zipWith compare bs as
-        maxs' = head comps' : every 2 (tail comps')
-        mins' = every 2 comps'
-        gts' = filter (== GT) maxs'
-        lts' = filter (== LT) mins'
-    in 
-        (length gts + length lts) `compare` (length gts' + length lts')
-
-every n xs = 
-    case drop (pred n) xs of
-        (y : ys) -> y : every n ys
-        []       -> []
+bestmove brd = maximumBy compareValues $ 
+    foldTree (\x acc -> evaluate x : acc) [] $ tree 4 White brd
 
