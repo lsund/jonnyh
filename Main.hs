@@ -9,6 +9,7 @@ import Moves
 import Initial
 import Test
 import GameTree
+import Parser
 
 main = return ()
 
