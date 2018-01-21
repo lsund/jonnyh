@@ -10,12 +10,17 @@ import Square
 datadir = "/home/lsund/Data/chess-data/openings/pgn/"
 file = "Hungarian.pgn"
 
-read = do
+sequences = do
     cont <- readFile $ datadir ++ file
-    let moves = take 40 $ lines cont
+    let moves = lines cont
         chunks = tail $ splitOn "\r1." $ concat $ filter (('[' /=) . head) moves
-        tokens = filter (not . null) $ splitOn " " $ removeReturns $ head chunks
-    return $ init $ map trimNumber tokens
+        sequences = map (splitOn " " . removeReturns) chunks
+    return $ map (init . filter (not . null) . map trimNumber) sequences
+
+starts n = do
+    xs <- sequences
+    return $ map (take n) xs
+
 
 removeReturns = replace (== '\r') ' '
 
@@ -23,5 +28,3 @@ trimNumber (x : '.' : xs) = xs
 trimNumber (x : y : '.' : xs) = xs
 trimNumber xs = xs
 
--- noteToMove :: String -> (Pice, Square)
--- noteToMove [f, r] = Pawn
