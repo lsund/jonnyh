@@ -14,8 +14,8 @@ import Moves
 main :: IO ()
 main = do
     -- let i = minmax 3 (tree White b2)
-    let (i, p) = minmax'' 4 (tree' White [b2])
-    print i
-    print p
+    let (Evaluation a b) = minmax' 4 (tree' White [b2])
+    print a
+    print b
     -- print $ allMoves Black p
 

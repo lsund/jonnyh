@@ -34,7 +34,6 @@ evaluate brd = sumPces whites - sumPces blacks
     where
         (whites, blacks) = List.partition isWhite $ Map.elems pos
         sumPces = foldl (\acc pce -> value pce + acc) 0 :: [Piece] -> Int
-        otKing = (King /=) . _type
         pos = _position brd
 
 board :: Position -> Board

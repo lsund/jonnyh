@@ -13,17 +13,28 @@ minmax 0 (Node brd _)          = evaluate brd
 minmax depth (Node _ children) =
     maximum $ map (negate . minmax (depth - 1)) children
 
-minmax' :: Int -> Tree Board -> (Int, Board)
-minmax' 0 (Node brd _)          = (evaluate brd, brd)
-minmax' depth (Node _ children) =
-    maximumBy (\(a, _) (c, _) -> a `compare` c) $
-        map (\t -> let (a, b) = minmax' (depth - 1) t in (negate a, b)) children
 
-minmax'' :: Int -> Tree [Board] -> (Int, [Board])
-minmax'' 0 (Node (x : xs) _)          = (evaluate x, x : xs)
-minmax'' depth (Node _ children) =
-    maximumBy (\(a, _) (c, _) -> a `compare` c) $
-        map (\t -> let (a, b) = minmax'' (depth - 1) t in (negate a, b)) children
+data Evaluation = Evaluation { _value :: Int
+                             , _sequence :: [Board]
+                             }
+
+
+instance Eq Evaluation where
+    a == b = _value a == _value b
+
+
+instance Ord Evaluation where
+    a `compare` b = _value a `compare` _value b
+
+
+mapValue :: (Int -> Int) -> Evaluation -> Evaluation
+mapValue f (Evaluation v xs) = Evaluation (f v) xs
+
+
+minmax' :: Int -> Tree [Board] -> Evaluation
+minmax' 0 (Node (x : xs) _)          = Evaluation (evaluate x) (x : xs)
+minmax' depth (Node _ children) =
+    maximum $ map (mapValue negate . minmax' (depth - 1)) children
 
 tree :: Color -> Board -> Tree Board
 tree col brd = Node brd [tree (succ col) brd' | brd' <- allPositions brd col]
