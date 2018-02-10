@@ -3,7 +3,7 @@ module Board.Board where
 
 import              Prelude             ((!!))
 import              GHC.Show
-import              Protolude            hiding (Map, show)
+import              Protolude            hiding (Map, show, evaluate)
 import              Data.Maybe
 import qualified    Data.List as List
 import qualified    Data.Map as Map
@@ -22,6 +22,12 @@ data Board = Board {
       _squares  :: [Square]
     , _position :: Position
 }
+
+instance Eq Board where
+    x == y = evaluate x == evaluate y
+
+instance Ord Board where
+    x `compare` y = evaluate x `compare` evaluate y
 
 evaluate :: Board -> Int
 evaluate brd = sumPces whites - sumPces blacks
