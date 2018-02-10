@@ -32,10 +32,9 @@ instance Ord Board where
 evaluate :: Board -> Int
 evaluate brd = sumPces whites - sumPces blacks
     where
-        (whites, blacks) = List.partition isWhite $ exceptKing pos
-        sumPces = foldr (\pce acc -> value pce + acc) 0 :: [Piece] -> Int
-        exceptKing position = filter notKing $ Map.elems position
-        notKing = (King /=) . _type
+        (whites, blacks) = List.partition isWhite $ Map.elems pos
+        sumPces = foldl (\acc pce -> value pce + acc) 0 :: [Piece] -> Int
+        otKing = (King /=) . _type
         pos = _position brd
 
 board :: Position -> Board

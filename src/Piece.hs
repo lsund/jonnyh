@@ -39,7 +39,7 @@ value (Piece _ Bishop) = 3
 value (Piece _ Knight) = 3
 value (Piece _ Rook)   = 5
 value (Piece _ Queen)  = 9
-value _                = -1
+value (Piece _ King)   = 99
 
 isWhite :: Piece -> Bool
 isWhite (Piece Black _ ) = False

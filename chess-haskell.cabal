@@ -2,7 +2,7 @@
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 553bbc6e73ab5b749daa095b8a9d6b01e17b035720ac35d91b1d82773e4da10e
+-- hash: 19f444927ac200c6d97bc01a50fa1003f03e1a355509e0bc78a77fce3c6d9ed6
 
 name:           chess-haskell
 version:        0.1.0.0
@@ -37,6 +37,7 @@ library
       Moves
       Parser
       Piece
+      Positions
       Test
       Util
   other-modules:

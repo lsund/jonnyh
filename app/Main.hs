@@ -4,12 +4,18 @@ module Main where
 -- import Protolude        hiding (evaluate)
 -- import Board.Board
 import Color
-import Board.Next
 import Protolude
 import Board.Initial
-import GameTree
+import MinMax
+import Positions
+import Moves
+
 
 main :: IO ()
-main =
-    print $ minmax 3 (tree White initialBoard)
+main = do
+    -- let i = minmax 3 (tree White b2)
+    let (i, p) = minmax'' 4 (tree' White [b2])
+    print i
+    print p
+    -- print $ allMoves Black p
 
