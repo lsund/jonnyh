@@ -11,5 +11,5 @@ import GameTree
 
 main :: IO ()
 main =
-    print $ evaluated initialBoard 3
+    print $ minmax 3 (tree White initialBoard)
 

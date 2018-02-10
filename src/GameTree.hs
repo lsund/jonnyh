@@ -8,17 +8,13 @@ import Board.Board
 import Board.Next
 import Data.Tree
 
-tree :: Int -> Color -> Board -> Tree Board
-tree 0 _ brd = Node brd []
-tree d col brd = Node brd [tree d' col' brd' | brd' <- allPositions brd col]
+minmax :: Int -> Tree Board -> Int
+minmax 0 (Node brd _)          = evaluate brd
+minmax depth (Node _ children) =
+    maximum $ map (negate . minmax (depth - 1)) children
+
+tree :: Color -> Board -> Tree Board
+tree col brd = Node brd [tree (succ col) brd' | brd' <- allPositions brd col]
     where
-        d'   = pred d
         col' = succ col
-
-
-evaluated :: Board -> Int -> Tree Int
-evaluated b n = map evaluate $ tree n White b
-
-bestSequence :: Board -> Int -> Board
-bestSequence b n = maximum $ tree n White b
 
