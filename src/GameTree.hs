@@ -2,13 +2,10 @@
 module GameTree where
 
 import Protolude                hiding (evaluate)
-import qualified Data.List as L
 
 import Color
-import Moves
 import Board.Board
 import Board.Next
-import Piece
 
 data Tree a = Node {
     _content  :: a,
@@ -24,7 +21,7 @@ foldTree f z (Node x []) = [f x z]
 foldTree f z (Node x ns) = [f x y | n <- ns, y <- foldTree f z n]
 
 tree :: Int -> Color -> Board -> Tree Board
-tree 0 col brd = Node brd []
+tree 0 _ brd = Node brd []
 tree d col brd = Node brd [tree d' col' brd' | brd' <- allPositions brd col]
     where
         d'   = pred d
@@ -37,21 +34,23 @@ intToOrd n
     | otherwise = EQ
 
 compareValues :: [(Board, Int)] -> [(Board, Int)] -> Ordering
-compareValues as bs = intToOrd $ compareValues' as bs 0
+compareValues as bs = intToOrd $ compareValues' as bs (0 :: Int)
     where
-        compareValues' [] [] n = 0
-        compareValues' ((_, a) : as) ((_, b) : bs) n
+        compareValues' [] [] _ = 0
+        compareValues' ((_, a) : as') ((_, b) : bs') n
             | even n =
                 case compare a b of
-                    GT -> succ $ compareValues' as bs (succ n)
-                    LT -> pred $ compareValues' as bs (succ n)
-                    EQ -> compareValues' as bs $ succ n
+                    GT -> succ $ compareValues' as' bs' (succ n)
+                    LT -> pred $ compareValues' as' bs' (succ n)
+                    EQ -> compareValues' as' bs' $ succ n
             | odd n =
                 case compare a b of
-                    GT -> pred $ compareValues' as bs (succ n)
-                    LT -> succ $ compareValues' as bs (succ n)
-                    EQ -> compareValues' as bs (succ n)
+                    GT -> pred $ compareValues' as' bs' (succ n)
+                    LT -> succ $ compareValues' as' bs' (succ n)
+                    EQ -> compareValues' as' bs' (succ n)
+        compareValues' _ _ _ = 0
 
+bestmove :: Board -> Int -> [(Board, Int)]
 bestmove brd n = maximumBy compareValues $
     foldTree (\x acc -> (x, evaluate x) : acc) [] $ tree n White brd
 

@@ -2,7 +2,6 @@
 module Moves where
 
 import Protolude
-import Data.Maybe
 import qualified Data.Map as Map
 
 import Color
@@ -15,15 +14,14 @@ import Piece
 -- piece moves
 
 pawnMoves :: Square -> Color -> Board -> [Square]
-pawnMoves sqr@(Square f r) col brd
-    | col == White =
+pawnMoves sqr@(Square f r) White brd =
         catMaybes $
             [   neighbor sqr brd North
             ,   neighborIfOccupied sqr brd NorthWest
             ,   neighborIfOccupied sqr brd NorthEast
             ]
             ++ if r == 2 then [Just $ Square f 4 | _rank sqr == 2] else []
-    | col == Black =
+pawnMoves sqr@(Square f r) Black brd =
         catMaybes $
             [   neighbor sqr brd South
             ,   neighborIfOccupied sqr brd SouthWest
@@ -46,7 +44,7 @@ knightMoves sqr brd =
         knightMove dir1 dir2 =
             case neighbor sqr brd dir2 of
                 Nothing  -> Nothing
-                Just sqr -> relative 2 sqr brd dir1
+                Just s -> relative 2 s brd dir1
 
 rookMoves :: Square -> Board -> [Square]
 rookMoves sqr brd = apply rookMove fourDirections
@@ -89,5 +87,5 @@ allMoves col brd = zip filteredSquares $ map (movesFrom brd) filteredSquares
     where
         filteredMap = Map.filter (ofColor col) $ _position brd
         filteredSquares = Map.keys filteredMap
-        ofColor col (Piece col' _) = col == col'
+        ofColor col'' (Piece col' _) = col'' == col'
 

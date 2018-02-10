@@ -5,7 +5,6 @@ import              Prelude             ((!!))
 import              GHC.Show
 import              Protolude            hiding (Map, show)
 import              Data.Maybe
-import              Data.Char
 import qualified    Data.List as List
 import qualified    Data.Map as Map
 
@@ -28,10 +27,9 @@ evaluate :: Board -> Int
 evaluate brd = sumPces whites - sumPces blacks
     where
         (whites, blacks) = List.partition isWhite $ exceptKing pos
-        sumPces = foldr (\pce sum -> value pce + sum) 0 :: [Piece] -> Int
-        exceptKing pos = filter notKing $ Map.elems pos
+        sumPces = foldr (\pce acc -> value pce + acc) 0 :: [Piece] -> Int
+        exceptKing position = filter notKing $ Map.elems position
         notKing = (King /=) . _type
-        isWhite = (White ==) . _color
         pos = _position brd
 
 board :: Position -> Board
@@ -40,21 +38,22 @@ board = Board [Square f r | f <- ['a'..'h'], r <- [1..8]]
 -------------------------------------------------------------------------------
 -- display
 
+
 instance Show Board where
-    show board =
+    show b =
         "   A  B  C  D  E  F  G  H\n" ++
-        concat (zipWith (\x ln -> show x ++ " " ++ ln) [8,7..1] rsRep')
+        concat (zipWith (\x ln -> show x ++ " " ++ ln) ([8,7..1] :: [Int]) rsRep')
         where
-            rs = reverse $ ranks board
-            rsRep = concatMap (strRep board)
+            rs = reverse $ ranks b
+            rsRep = concatMap (strRep b)
             rsRep' = map ((++ "\n") . rsRep) rs
-            strRep board sqr =
-                case occupiedBy sqr board of
+            strRep b' sqr =
+                case occupiedBy sqr b' of
                     Just pce -> "[" ++ show pce ++ "]"
                     Nothing  -> "[ ]"
 
 ranks :: Board -> [[Square]]
-ranks board = ranks' $ _squares board
+ranks = ranks' . _squares
     where
         ranks' sqrs       = map (`ofRank` sqrs) [1..8]
         ofRank r          = foldr (\s acc -> consIf (_rank s == r) s acc) []
@@ -65,15 +64,15 @@ ranks board = ranks' $ _squares board
 -- piece inspection
 
 occupied :: Board -> Square -> Bool
-occupied board sqr = isJust $ Map.lookup sqr $ _position board
+occupied b sqr = isJust $ Map.lookup sqr $ _position b
 
 occupiedBy :: Square -> Board -> Maybe Piece
-occupiedBy sqr board = Map.lookup sqr $ _position board
+occupiedBy sqr = Map.lookup sqr . _position
 
 occupiedByColor :: Board -> Square -> Maybe Color
-occupiedByColor board sqr =
-    case occupiedBy sqr board of
-        Just sqr -> Just (_color sqr)
+occupiedByColor b sqr =
+    case occupiedBy sqr b of
+        Just s -> Just (_color s)
         Nothing  -> Nothing
 
 notOccupiedBy :: Color -> Board -> [Square] -> [Square]
@@ -82,20 +81,21 @@ notOccupiedBy col brd = filter (\x -> Just col /= occupiedByColor brd x)
 -------------------------------------------------------------------------------
 -- get a single square
 
+-- TODO
 relative :: Int -> Square ->  Board -> Direction -> Maybe Square
-relative n (Square f r) board dir =
+relative n (Square f r) _ dir =
     boardSquare $
-    let (f, r) = cords dir in Square f r
+    let (f', r') = cords dir in Square f' r'
     where
         nNorth    = iterate succ r !! n
         nEast     = iterate succ f !! n
         nSouth    = iterate pred r !! n
         nWest     = iterate pred f !! n
-        boardSquare sqr@(Square f r)
-            | f `elem` ['a'..'h'] && r `elem` [1..8] = Just sqr
+        boardSquare sqr@(Square f' r')
+            | f' `elem` ['a'..'h'] && r' `elem` [1..8] = Just sqr
             | otherwise                              = Nothing
-        cords dir =
-            case dir of
+        cords dir' =
+            case dir' of
             North     -> (f    , nNorth)
             NorthEast -> (nEast, nNorth)
             East      -> (nEast, r     )
@@ -123,13 +123,13 @@ takeWhileOneMore :: (a -> Bool) -> [a] -> [a]
 takeWhileOneMore p = foldr (\x ys -> if p x then x : ys else [x]) []
 
 untilOccupied :: Square -> Board -> Direction -> [Square]
-untilOccupied sqr board dir =
+untilOccupied sqr b dir =
     let reverseSeq = foldl nth [] [1..8]
-    in reverse $ takeWhileOneMore (not . occupied board) (reverse reverseSeq)
+    in reverse $ takeWhileOneMore (not . occupied b) (reverse reverseSeq)
     where
         nth xs n =
-            case relative n sqr board dir of
-                Just sqr -> sqr : xs
+            case relative n sqr b dir of
+                Just s -> s : xs
                 Nothing -> [] ++ xs
 
 -------------------------------------------------------------------------------
@@ -139,7 +139,6 @@ move :: Square -> Board -> Square -> Board
 move sqr brd sqr' =
     let
         pce = occupiedBy sqr brd
-        pce' = occupiedBy sqr' brd
         newmap = Map.delete sqr (_position brd)
         newmap' = Map.delete sqr' newmap
         newmap'' = Map.insert sqr' (fromJust pce) newmap'

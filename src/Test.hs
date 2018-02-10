@@ -8,7 +8,6 @@ import qualified Data.Map as Map
 
 
 import Color
-import Moves
 import Board.Board
 import Board.Square
 import Piece
@@ -16,22 +15,23 @@ import Piece
 data Play = Play Board [Square]
 
 instance Show Play where
-    show (Play board moves) =
+    show (Play b moves) =
         "   A  B  C  D  E  F  G  H\n" ++
-        concat (zipWith (\x ln -> show x ++ " " ++ ln) [8,7..1] rsRep')
+        concat (zipWith (\x ln -> show x ++ " " ++ ln) ([8,7..1] :: [Int]) rsRep')
         where
-            rs = reverse $ ranks board
-            rsRep = concatMap (strRep board)
+            rs = reverse $ ranks b
+            rsRep = concatMap (strRep b)
             rsRep' = map ((++ "\n") . rsRep) rs
-            strRep board sqr =
+            strRep b' sqr =
                 if sqr `elem` moves then "[x]" else
-                    case occupiedBy sqr board of
+                    case occupiedBy sqr b' of
                         Just pce -> "[" ++ show pce ++ "]"
                         Nothing  -> "[ ]"
 
 -------------------------------------------------------------------------------
 -- tests
 
+testQueen :: Board
 testQueen = board $ Map.fromList
     [
       (Square 'd' 8, Piece White Pawn)
@@ -39,6 +39,7 @@ testQueen = board $ Map.fromList
     , (Square 'b' 4, Piece Black Queen)
     ]
 
+testKnight :: Board
 testKnight = board $ Map.fromList
     [
       (Square 'e' 5, Piece White Pawn)
@@ -46,6 +47,7 @@ testKnight = board $ Map.fromList
     , (Square 'e' 3, Piece Black Queen)
     ]
 
+testPawn :: Board
 testPawn = board $ Map.fromList
     [
       (Square 'g' 4, Piece Black Pawn)
@@ -53,6 +55,7 @@ testPawn = board $ Map.fromList
     , (Square 'g' 3, Piece White Queen)
     ]
 
+testKing :: Board
 testKing = board $ Map.fromList
     [
       (Square 'd' 4, Piece Black King)
