@@ -1,5 +1,5 @@
 
-module Square where
+module Board.Square where
 
 import Data.Char
 

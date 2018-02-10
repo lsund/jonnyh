@@ -1,9 +1,9 @@
 
-module Initial where
+module Board.Initial where
 
 import qualified Data.Map as Map
 
-import Board
+import Board.Board
 import Square
 import Piece
 

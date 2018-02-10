@@ -4,10 +4,10 @@ module Moves where
 import Data.Maybe
 import qualified Data.Map as Map
 
+import Board.Direction
+import Board.Square
+import Board.Board
 import Piece
-import Direction
-import Square
-import Board
 
 -------------------------------------------------------------------------------
 -- piece moves

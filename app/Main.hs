@@ -1,5 +1,9 @@
 
 module Main where
 
-main = return ()
+import Board.Initial
+
+main :: IO ()
+main =
+    print initialBoard
 

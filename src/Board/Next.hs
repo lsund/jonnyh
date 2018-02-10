@@ -1,5 +1,5 @@
 
-module NextBoard where
+module Board.Next where
 
 import Square
 import Piece

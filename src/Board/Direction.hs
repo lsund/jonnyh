@@ -1,5 +1,5 @@
 
-module Direction where 
+module Board.Direction where
 
 data Direction  = North
                 | NorthEast

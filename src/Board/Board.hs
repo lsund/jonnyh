@@ -1,5 +1,5 @@
 
-module Board where
+module Board.Board where
 
 import qualified Data.List as List
 import Data.Maybe
