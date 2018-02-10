@@ -1,7 +1,7 @@
 
 module Util where
 
-import Control.Applicative
+import Protolude
 
 -- Wraps the value in a minimal context if the predicate is true, otherwise
 -- returns the empty value

@@ -1,6 +1,7 @@
 
 module Main where
 
+import Protolude
 import Board.Initial
 
 main :: IO ()

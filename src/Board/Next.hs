@@ -1,9 +1,10 @@
 
 module Board.Next where
 
-import Square
-import Piece
-import Board
+import Protolude
+import Color
+import Board.Square
+import Board.Board
 import Moves
 
 -------------------------------------------------------------------------------
@@ -11,7 +12,7 @@ import Moves
 -- board
 
 moveToPosition :: Board -> (Square, Square) -> Board
-moveToPosition brd (sqr, sqr') = Board.move sqr brd sqr'
+moveToPosition brd (sqr, sqr') = move sqr brd sqr'
 
 movesToPositions :: Board -> (Square, [Square]) -> [Board]
 movesToPositions brd (sqr, sqrs) =

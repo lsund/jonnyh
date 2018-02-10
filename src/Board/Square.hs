@@ -1,9 +1,8 @@
 
 module Board.Square where
 
-import Data.Char
-
-import Piece
+import              GHC.Show
+import Protolude
 
 data Square = Square {
       _file    :: Char

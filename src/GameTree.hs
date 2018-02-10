@@ -1,12 +1,14 @@
 
 module GameTree where
 
-import Data.List
+import Protolude                hiding (evaluate)
+import qualified Data.List as L
 
+import Color
 import Moves
-import Board
+import Board.Board
+import Board.Next
 import Piece
-import NextBoard
 
 data Tree a = Node {
     _content  :: a,

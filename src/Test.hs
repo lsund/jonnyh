@@ -1,10 +1,16 @@
 
 module Test where
 
-import Moves
-import Board
-import Square
+
+import GHC.Show
+import Protolude                hiding (show)
 import qualified Data.Map as Map
+
+
+import Color
+import Moves
+import Board.Board
+import Board.Square
 import Piece
 
 data Play = Play Board [Square]

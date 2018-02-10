@@ -1,15 +1,10 @@
 
 module Piece where
 
-data Color  = Black | White deriving (Show, Eq)
+import              GHC.Show
+import              Protolude    hiding  (Type)
 
-instance Enum Color where
-    succ White = Black
-    succ Black = White
-    toEnum n | n `mod` 2 == 0 = White
-    toEnum _ = Black
-    fromEnum White = 0
-    fromEnum Black = 1
+import              Color
 
 data Type  = Pawn
            | Bishop
@@ -23,7 +18,6 @@ data Piece = Piece {
       _color :: Color
     , _type :: Type
 }
-
 instance Show Piece where
     show (Piece Black Pawn)   = "p"
     show (Piece Black Bishop) = "b"

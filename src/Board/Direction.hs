@@ -1,6 +1,8 @@
 
 module Board.Direction where
 
+import Protolude
+
 data Direction  = North
                 | NorthEast
                 | East

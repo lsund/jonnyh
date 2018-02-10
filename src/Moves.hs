@@ -1,9 +1,11 @@
 
 module Moves where
 
+import Protolude
 import Data.Maybe
 import qualified Data.Map as Map
 
+import Color
 import Board.Direction
 import Board.Square
 import Board.Board

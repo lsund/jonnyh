@@ -2,7 +2,7 @@
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 393860ca0e4fa1a0725bbd523967b16f6efc63af68c26ee7087c174340ac8388
+-- hash: 553bbc6e73ab5b749daa095b8a9d6b01e17b035720ac35d91b1d82773e4da10e
 
 name:           chess-haskell
 version:        0.1.0.0
@@ -32,6 +32,7 @@ library
       Board.Initial
       Board.Next
       Board.Square
+      Color
       GameTree
       Moves
       Parser
@@ -45,6 +46,10 @@ library
   default-extensions: NoImplicitPrelude OverloadedStrings
   build-depends:
       base >=4.7 && <5
+    , containers
+    , protolude
+    , split
+    , text
   default-language: Haskell2010
 
 executable chess-haskell-exe
@@ -58,6 +63,10 @@ executable chess-haskell-exe
   build-depends:
       base >=4.7 && <5
     , chess-haskell
+    , containers
+    , protolude
+    , split
+    , text
   default-language: Haskell2010
 
 test-suite chess-haskell-test
@@ -72,4 +81,8 @@ test-suite chess-haskell-test
   build-depends:
       base >=4.7 && <5
     , chess-haskell
+    , containers
+    , protolude
+    , split
+    , text
   default-language: Haskell2010

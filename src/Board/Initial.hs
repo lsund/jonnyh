@@ -3,8 +3,10 @@ module Board.Initial where
 
 import qualified Data.Map as Map
 
+import Protolude
+import Color
 import Board.Board
-import Square
+import Board.Square
 import Piece
 
 initialBoard :: Board

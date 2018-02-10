@@ -1,15 +1,19 @@
 
 module Board.Board where
 
-import qualified Data.List as List
-import Data.Maybe
-import Data.Char
-import qualified Data.Map as Map
+import              Prelude             ((!!))
+import              GHC.Show
+import              Protolude            hiding (Map, show)
+import              Data.Maybe
+import              Data.Char
+import qualified    Data.List as List
+import qualified    Data.Map as Map
 
-import Direction
-import Square
-import Piece
-import Util
+import              Color
+import              Board.Direction
+import              Util
+import              Board.Square
+import              Piece
 
 type Map = Map.Map
 
@@ -24,7 +28,7 @@ evaluate :: Board -> Int
 evaluate brd = sumPces whites - sumPces blacks
     where
         (whites, blacks) = List.partition isWhite $ exceptKing pos
-        sumPces = foldr (\pce sum -> Piece.value pce + sum) 0 :: [Piece] -> Int
+        sumPces = foldr (\pce sum -> value pce + sum) 0 :: [Piece] -> Int
         exceptKing pos = filter notKing $ Map.elems pos
         notKing = (King /=) . _type
         isWhite = (White ==) . _color
