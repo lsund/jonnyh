@@ -17,14 +17,14 @@ pawnMoves sqr@(Square f r) col brd
     | col == White =
         catMaybes $
             [   neighbor sqr brd North
-            ,   neighborIfOccupied sqr brd NorthWest 
-            ,   neighborIfOccupied sqr brd NorthEast 
+            ,   neighborIfOccupied sqr brd NorthWest
+            ,   neighborIfOccupied sqr brd NorthEast
             ]
             ++ if r == 2 then [Just $ Square f 4 | _rank sqr == 2] else []
     | col == Black =
         catMaybes $
-            [   neighbor sqr brd South 
-            ,   neighborIfOccupied sqr brd SouthWest 
+            [   neighbor sqr brd South
+            ,   neighborIfOccupied sqr brd SouthWest
             ,   neighborIfOccupied sqr brd SouthEast
             ]
             ++ if r == 7 then [Just $ Square f 5 | _rank sqr == 7] else []
@@ -45,7 +45,7 @@ knightMoves sqr brd =
             case neighbor sqr brd dir2 of
                 Nothing  -> Nothing
                 Just sqr -> relative 2 sqr brd dir1
-    
+
 rookMoves :: Square -> Board -> [Square]
 rookMoves sqr brd = apply rookMove fourDirections
     where
@@ -53,7 +53,7 @@ rookMoves sqr brd = apply rookMove fourDirections
         rookMove = untilOccupied sqr brd
 
 queenMoves :: Square -> Board -> [Square]
-queenMoves sqr brd = 
+queenMoves sqr brd =
     bishopMoves sqr brd ++ rookMoves sqr brd
 
 kingMoves :: Square -> Board -> [Square]
@@ -67,10 +67,10 @@ kingMoves sqr brd =
 -- Moves from a square
 
 movesFrom :: Board -> Square -> [Square]
-movesFrom brd sqr = 
+movesFrom brd sqr =
     case Map.lookup sqr $ _position brd of
-        Just (Piece col pce) -> 
-            notOccupiedBy col brd $ case pce of 
+        Just (Piece col pce) ->
+            notOccupiedBy col brd $ case pce of
                 Pawn   -> notOccupiedBy (succ col) brd $ pawnMoves sqr col brd
                 Bishop -> bishopMoves sqr brd
                 Knight -> knightMoves sqr brd

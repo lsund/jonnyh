@@ -14,12 +14,12 @@ moveToPosition :: Board -> (Square, Square) -> Board
 moveToPosition brd (sqr, sqr') = Board.move sqr brd sqr'
 
 movesToPositions :: Board -> (Square, [Square]) -> [Board]
-movesToPositions brd (sqr, sqrs) = 
+movesToPositions brd (sqr, sqrs) =
     map (\sqr' -> moveToPosition brd (sqr, sqr')) sqrs
 
 allPositions :: Board -> Color -> [Board]
 allPositions brd col =
-    let 
+    let
         moves = allMoves col brd
     in concatMap (movesToPositions brd) moves
 

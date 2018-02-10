@@ -15,7 +15,7 @@ type Map = Map.Map
 
 type Position = Map Square Piece
 
-data Board = Board { 
+data Board = Board {
       _squares  :: [Square]
     , _position :: Position
 }
@@ -37,7 +37,7 @@ board = Board [Square f r | f <- ['a'..'h'], r <- [1..8]]
 -- display
 
 instance Show Board where
-    show board = 
+    show board =
         "   A  B  C  D  E  F  G  H\n" ++
         concat (zipWith (\x ln -> show x ++ " " ++ ln) [8,7..1] rsRep')
         where
@@ -50,7 +50,7 @@ instance Show Board where
                     Nothing  -> "[ ]"
 
 ranks :: Board -> [[Square]]
-ranks board = ranks' $ _squares board  
+ranks board = ranks' $ _squares board
     where
         ranks' sqrs       = map (`ofRank` sqrs) [1..8]
         ofRank r          = foldr (\s acc -> consIf (_rank s == r) s acc) []
@@ -67,7 +67,7 @@ occupiedBy :: Square -> Board -> Maybe Piece
 occupiedBy sqr board = Map.lookup sqr $ _position board
 
 occupiedByColor :: Board -> Square -> Maybe Color
-occupiedByColor board sqr = 
+occupiedByColor board sqr =
     case occupiedBy sqr board of
         Just sqr -> Just (_color sqr)
         Nothing  -> Nothing
@@ -79,19 +79,19 @@ notOccupiedBy col brd = filter (\x -> Just col /= occupiedByColor brd x)
 -- get a single square
 
 relative :: Int -> Square ->  Board -> Direction -> Maybe Square
-relative n (Square f r) board dir = 
-    boardSquare $ 
+relative n (Square f r) board dir =
+    boardSquare $
     let (f, r) = cords dir in Square f r
-    where 
+    where
         nNorth    = iterate succ r !! n
         nEast     = iterate succ f !! n
         nSouth    = iterate pred r !! n
         nWest     = iterate pred f !! n
-        boardSquare sqr@(Square f r) 
+        boardSquare sqr@(Square f r)
             | f `elem` ['a'..'h'] && r `elem` [1..8] = Just sqr
             | otherwise                              = Nothing
-        cords dir = 
-            case dir of 
+        cords dir =
+            case dir of
             North     -> (f    , nNorth)
             NorthEast -> (nEast, nNorth)
             East      -> (nEast, r     )
@@ -119,11 +119,11 @@ takeWhileOneMore :: (a -> Bool) -> [a] -> [a]
 takeWhileOneMore p = foldr (\x ys -> if p x then x : ys else [x]) []
 
 untilOccupied :: Square -> Board -> Direction -> [Square]
-untilOccupied sqr board dir = 
+untilOccupied sqr board dir =
     let reverseSeq = foldl nth [] [1..8]
     in reverse $ takeWhileOneMore (not . occupied board) (reverse reverseSeq)
     where
-        nth xs n = 
+        nth xs n =
             case relative n sqr board dir of
                 Just sqr -> sqr : xs
                 Nothing -> [] ++ xs
@@ -133,7 +133,7 @@ untilOccupied sqr board dir =
 
 move :: Square -> Board -> Square -> Board
 move sqr brd sqr' =
-    let 
+    let
         pce = occupiedBy sqr brd
         pce' = occupiedBy sqr' brd
         newmap = Map.delete sqr (_position brd)

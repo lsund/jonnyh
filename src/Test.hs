@@ -46,7 +46,7 @@ testPawn = board $ Map.fromList
     , (Square 'f' 3, Piece Black Queen)
     , (Square 'g' 3, Piece White Queen)
     ]
-    
+
 testKing = board $ Map.fromList
     [
       (Square 'd' 4, Piece Black King)

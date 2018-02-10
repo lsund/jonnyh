@@ -1,5 +1,5 @@
 
-module Piece where 
+module Piece where
 
 data Color  = Black | White deriving (Show, Eq)
 
@@ -48,4 +48,5 @@ value (Piece _ Queen)  = 9
 value _                = undefined
 
 isWhite :: Piece -> Bool
-isWhite pce = _color pce == White
+isWhite (Piece Black _ ) = False
+isWhite (Piece White _ ) = True
