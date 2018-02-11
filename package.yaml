@@ -24,6 +24,7 @@ dependencies:
 - text
 - containers
 - parsec
+- postgresql-simple
 
 default-extensions:
     - NoImplicitPrelude

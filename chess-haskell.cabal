@@ -2,7 +2,7 @@
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 73671c2c3c3245e0f24df43f420bd123d44089eebd2fb562fb951a6e8c6c5aab
+-- hash: ff07c18518c3b94d9dd9cb7165461f22bf99204b62b86d10198cc42dc907c30b
 
 name:           chess-haskell
 version:        0.1.0.0
@@ -33,6 +33,7 @@ library
       Board.Next
       Board.Square
       Color
+      Database
       MinMax
       Moves
       Parser
@@ -49,6 +50,7 @@ library
       base >=4.7 && <5
     , containers
     , parsec
+    , postgresql-simple
     , protolude
     , split
     , text
@@ -67,6 +69,7 @@ executable chess-haskell-exe
     , chess-haskell
     , containers
     , parsec
+    , postgresql-simple
     , protolude
     , split
     , text
@@ -86,6 +89,7 @@ test-suite chess-haskell-test
     , chess-haskell
     , containers
     , parsec
+    , postgresql-simple
     , protolude
     , split
     , text

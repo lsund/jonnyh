@@ -10,7 +10,6 @@ import Protolude
 import MinMax
 import Positions
 
-
 main :: IO ()
 main = do
     -- let i = minmax 3 (tree White b2)
