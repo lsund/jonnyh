@@ -41,6 +41,6 @@ tree col brd = Node brd [tree (succ col) brd' | brd' <- allPositions brd col]
 
 tree' :: Color -> [Board] -> Tree [Board]
 tree' col (b : bs) =
-    Node (b : bs) [tree' (succ col) (b' : b: bs) | b' <- allPositions b col]
+    Node (b : bs) [tree' (succ col) (b' : b : bs) | b' <- allPositions b col]
 tree' _ [] = Node [] []
 
