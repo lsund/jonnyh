@@ -10,18 +10,6 @@ symbol :: String -> Parser (String, Maybe Int)
 symbol s = parsecMap (\x -> (x, Nothing)) $ string s <* spaces
 
 
-metas :: [String]
-metas = [ "Event"
-        , "Site"
-        , "Date"
-        , "Round"
-        , "WhiteElo"
-        , "BlackElo"
-        , "White"
-        , "Black"
-        , "Result"
-        , "ECO"]
-
 type ChessParser u = ParsecT String u Identity
 
 data Action = Move String String String | Result String String | Unfinished
@@ -29,6 +17,20 @@ data Action = Move String String String | Result String String | Unfinished
 data Metadata = Metadata String String
 
 data Game = Game [Metadata] [Action]
+
+
+metaLabels :: [String]
+metaLabels = [ "Event"
+             , "Site"
+             , "Date"
+             , "Round"
+             , "WhiteElo"
+             , "BlackElo"
+             , "White"
+             , "Black"
+             , "Result"
+             , "ECO"]
+
 
 parseSingleMove :: ChessParser u String
 parseSingleMove = many1 (oneOf "abcdefgh12345678NBRQKxOO+-=")
@@ -61,7 +63,7 @@ parseMoveLine = sepBy (try parseMove <|> try parseResult <|> parseUnfinished) (m
 parseMetaLine :: ChessParser () Metadata
 parseMetaLine = do
     _ <- symbol "["
-    e <- choice $ map (try . string) metas
+    e <- choice $ map (try . string) metaLabels
     spaces
     _ <- symbol "\""
     s <- many $ noneOf "\""
@@ -70,8 +72,8 @@ parseMetaLine = do
 
 parseGame :: ChessParser () Game
 parseGame = do
-    meta <- many1 parseMetaLine
-    _ <- newline
+    meta  <- many1 parseMetaLine
+    _     <- newline
     moves <- endBy parseMoveLine newline
     return $ Game meta (concat moves)
 
@@ -80,5 +82,3 @@ parseGames = many parseGame
 
 parseFile :: String -> IO (Either ParseError [Game])
 parseFile = parseFromFile parseGames
-
-
