@@ -1,39 +1,84 @@
 
 module Parser where
 
-import              Prelude                  (String)
-import              Protolude        hiding  (replace)
-import              Data.List.Split
+import Prelude                                  (String)
+import Protolude                        hiding  (try, (<|>), many, option)
+import Text.ParserCombinators.Parsec
+import Text.Parsec.Prim                 hiding  (try)
 
-import              Util
-import qualified    Data.List        as L
-import qualified    Data.Text        as T
-
-
-datadir :: FilePath
-datadir = "/home/lsund/Data/chess-data/openings/pgn/"
-file :: FilePath
-file = "Hungarian.pgn"
-
-sequences :: IO [[String]]
-sequences = do
-    cont <- readFile $ datadir ++ file
-    let moves = L.lines (T.unpack cont)
-        chunks = L.tail $ splitOn "\r1." $ concat $ filter (('[' /=) . L.head) moves
-        ss = map (splitOn " " . removeReturns) chunks
-    return $ map (L.init . filter (not . null) . map trimNumber) ss
-
-starts :: Int -> IO [[String]]
-starts n = do
-    xs <- sequences
-    return $ map (take n) xs
+symbol :: String -> Parser (String, Maybe Int)
+symbol s = parsecMap (\x -> (x, Nothing)) $ string s <* spaces
 
 
-removeReturns :: String -> String
-removeReturns = replace (== '\r') ' '
+metas :: [String]
+metas = [ "Event"
+        , "Site"
+        , "Date"
+        , "Round"
+        , "WhiteElo"
+        , "BlackElo"
+        , "White"
+        , "Black"
+        , "Result"
+        , "ECO"]
 
-trimNumber :: String -> String
-trimNumber (_ : '.' : xs) = xs
-trimNumber (_ : _ : '.' : xs) = xs
-trimNumber xs = xs
+type ChessParser u = ParsecT String u Identity
+
+data Action = Move String String String | Result String String | Unfinished
+
+data Metadata = Metadata String String
+
+data Game = Game [Metadata] [Action]
+
+parseSingleMove :: ChessParser u String
+parseSingleMove = many1 (oneOf "abcdefgh12345678NBRQKxOO+-=")
+
+
+parseMove :: ChessParser u Action
+parseMove = do
+    n <- many1 digit
+    _ <- char '.'
+    w <- parseSingleMove
+    _ <- space
+    b <- option "" parseSingleMove
+    return $ Move n w b
+
+parseResult :: ChessParser u Action
+parseResult = do
+    w <- try (string "1/2") <|> string "1" <|> string "0"
+    _ <- char '-'
+    b <- try (string "1/2") <|> string "1" <|> string "0"
+    return $ Result w b
+
+parseUnfinished :: ChessParser u Action
+parseUnfinished = do
+    _ <- char '*'
+    return Unfinished
+
+parseMoveLine :: ChessParser u [Action]
+parseMoveLine = sepBy (try parseMove <|> try parseResult <|> parseUnfinished) (many $ char ' ')
+
+parseMetaLine :: ChessParser () Metadata
+parseMetaLine = do
+    _ <- symbol "["
+    e <- choice $ map (try . string) metas
+    spaces
+    _ <- symbol "\""
+    s <- many $ noneOf "\""
+    _ <- string "\"]\n"
+    return $ Metadata e s
+
+parseGame :: ChessParser () Game
+parseGame = do
+    meta <- many1 parseMetaLine
+    _ <- newline
+    moves <- endBy parseMoveLine newline
+    return $ Game meta (concat moves)
+
+parseGames :: ChessParser () [Game]
+parseGames = many parseGame
+
+parseFile :: String -> IO (Either ParseError [Game])
+parseFile = parseFromFile parseGames
+
 

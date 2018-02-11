@@ -2,7 +2,7 @@
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 19f444927ac200c6d97bc01a50fa1003f03e1a355509e0bc78a77fce3c6d9ed6
+-- hash: 73671c2c3c3245e0f24df43f420bd123d44089eebd2fb562fb951a6e8c6c5aab
 
 name:           chess-haskell
 version:        0.1.0.0
@@ -33,7 +33,7 @@ library
       Board.Next
       Board.Square
       Color
-      GameTree
+      MinMax
       Moves
       Parser
       Piece
@@ -48,6 +48,7 @@ library
   build-depends:
       base >=4.7 && <5
     , containers
+    , parsec
     , protolude
     , split
     , text
@@ -65,6 +66,7 @@ executable chess-haskell-exe
       base >=4.7 && <5
     , chess-haskell
     , containers
+    , parsec
     , protolude
     , split
     , text
@@ -83,6 +85,7 @@ test-suite chess-haskell-test
       base >=4.7 && <5
     , chess-haskell
     , containers
+    , parsec
     , protolude
     , split
     , text

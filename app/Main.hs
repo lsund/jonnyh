@@ -3,12 +3,12 @@ module Main where
 
 -- import Protolude        hiding (evaluate)
 -- import Board.Board
+-- import Board.Initial
+-- import Moves
 import Color
 import Protolude
-import Board.Initial
 import MinMax
 import Positions
-import Moves
 
 
 main :: IO ()

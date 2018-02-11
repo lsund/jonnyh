@@ -23,6 +23,7 @@ dependencies:
 - split
 - text
 - containers
+- parsec
 
 default-extensions:
     - NoImplicitPrelude
