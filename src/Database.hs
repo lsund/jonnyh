@@ -37,12 +37,18 @@ insertMeta conn dat =
                  )
 
 insertMoves :: Connection -> [MoveText] -> IO Int64
-insertMoves conn _ =
+insertMoves conn dat =
     executeMany conn q values
     where
         q = "insert into move (gameid, movenumber, white, black) values (?,?,?,?)"
-        moveToTuple (Move n w b) = (1 :: Int, 1 :: Int, w, b)
-        values = map moveToTuple [Move "1" "d4" "b4", Move "2" "d4" "s5"]
+        moveToTuple (Move n w b) = (1 :: Int, n, w, b)
+        moveToTuple _            = (-1 :: Int, -1, "", "")
+        values = map moveToTuple $ filter (== Move{}) dat
+
+
+-- mockGame = Game
+
+moveMock = [Move 1 "d4" "b4", Move 2 "d4" "s5", GameResult "1" "0"]
 
 mock = Metadata
         (Tag Event "Kongress")
@@ -60,6 +66,6 @@ rundb :: IO ()
 rundb = do
     conn <- makeConnection
     _ <- insertMeta conn mock
-    _ <- insertMoves conn []
+    _ <- insertMoves conn moveMock
     return ()
     -- listContents conn

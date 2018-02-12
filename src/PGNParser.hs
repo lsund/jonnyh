@@ -1,7 +1,7 @@
 
 module PGNParser where
 
-import Prelude                                  (String)
+import Prelude                                  (String, read)
 import Protolude                        hiding  (try, (<|>), many, option)
 import Text.ParserCombinators.Parsec
 import Text.Parsec.Prim                 hiding  (try)
@@ -12,7 +12,10 @@ symbol s = parsecMap (\x -> (x, Nothing)) $ string s <* spaces
 
 type PGNParser u = ParsecT String u Identity
 
-data MoveText = Move String String String | GameResult String String | Unfinished
+data MoveText   = Move Int String String
+                | GameResult String String
+                | Unfinished
+                deriving (Eq)
 
 data TagKey = Event
             | Site
@@ -82,7 +85,7 @@ parseMove = do
     w <- parseSingleMove
     _ <- space
     b <- option "" parseSingleMove
-    return $ Move n w b
+    return $ Move (read n :: Int) w b
 
 parseResult :: PGNParser u MoveText
 parseResult = do
