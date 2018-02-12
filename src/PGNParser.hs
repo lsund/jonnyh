@@ -15,7 +15,7 @@ type PGNParser u = ParsecT String u Identity
 data MoveText   = Move Int String String
                 | GameResult String String
                 | Unfinished
-                deriving (Eq)
+                deriving (Eq, Show)
 
 data TagKey = Event
             | Site
@@ -43,7 +43,34 @@ data Metadata = Metadata { _event :: Tag
                          , _eco :: Tag
                          }
 
-data Game = Game [Tag] [MoveText]
+data Game = Game Metadata [MoveText]
+
+tagValue :: Tag -> String
+tagValue (Tag _ v) = v
+
+isMove :: MoveText -> Bool
+isMove Move{} = True
+isMove _      = False
+
+tl2m :: Metadata -> [Tag] -> Metadata
+tl2m acc []                    = acc
+tl2m acc (Tag Event    v : xs) = tl2m acc{ _event    = Tag Event    v } xs
+tl2m acc (Tag Site     v : xs) = tl2m acc{ _site     = Tag Site     v } xs
+tl2m acc (Tag Date     v : xs) = tl2m acc{ _date     = Tag Date     v } xs
+tl2m acc (Tag Round    v : xs) = tl2m acc{ _round    = Tag Round    v } xs
+tl2m acc (Tag White    v : xs) = tl2m acc{ _white    = Tag White    v } xs
+tl2m acc (Tag Black    v : xs) = tl2m acc{ _black    = Tag Black    v } xs
+tl2m acc (Tag Result   v : xs) = tl2m acc{ _result   = Tag Result   v } xs
+tl2m acc (Tag WhiteElo v : xs) = tl2m acc{ _whiteElo = Tag WhiteElo v } xs
+tl2m acc (Tag BlackElo v : xs) = tl2m acc{ _blackElo = Tag BlackElo v } xs
+tl2m acc (Tag ECO      v : xs) = tl2m acc{ _eco      = Tag ECO      v } xs
+tl2m acc (Tag Unknown  _ : xs) = tl2m acc                               xs
+
+tl2meta :: [Tag] -> Metadata
+tl2meta = tl2m emptyMetadata
+    where
+        emptyMetadata = Metadata u u u u u u u u u u
+        u = Tag Unknown ""
 
 metaLabels :: [String]
 metaLabels = [ "Event"
@@ -57,8 +84,6 @@ metaLabels = [ "Event"
              , "Result"
              , "ECO"]
 
-tagValue :: Tag -> String
-tagValue (Tag _ v) = v
 
 stringToTagKey :: String -> TagKey
 stringToTagKey "Event"    = Event
@@ -117,7 +142,7 @@ parseGame = do
     meta  <- many1 parseMetaLine
     _     <- newline
     moves <- endBy parseMoveLine newline
-    return $ Game meta (concat moves)
+    return $ Game (tl2meta meta) (concat moves)
 
 parseGames :: PGNParser () [Game]
 parseGames = many parseGame

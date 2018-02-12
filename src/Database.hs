@@ -43,29 +43,13 @@ insertMoves conn dat =
         q = "insert into move (gameid, movenumber, white, black) values (?,?,?,?)"
         moveToTuple (Move n w b) = (1 :: Int, n, w, b)
         moveToTuple _            = (-1 :: Int, -1, "", "")
-        values = map moveToTuple $ filter (== Move{}) dat
-
-
--- mockGame = Game
-
-moveMock = [Move 1 "d4" "b4", Move 2 "d4" "s5", GameResult "1" "0"]
-
-mock = Metadata
-        (Tag Event "Kongress")
-        (Tag Site "Frankfurt")
-        (Tag Date "1887")
-        (Tag Round "13")
-        (Tag White "Joseph")
-        (Tag Black "Berger")
-        (Tag Result "1-0")
-        (Tag WhiteElo "")
-        (Tag BlackElo "1242")
-        (Tag ECO "D37")
+        values = map moveToTuple $ filter isMove dat
 
 rundb :: IO ()
 rundb = do
     conn <- makeConnection
-    _ <- insertMeta conn mock
-    _ <- insertMoves conn moveMock
+    Right (Game meta moves : _) <- parseFile "resources/pgn/QGDOrthoMain.pgn"
+    _ <- insertMeta conn meta
+    _ <- insertMoves conn moves
     return ()
     -- listContents conn
