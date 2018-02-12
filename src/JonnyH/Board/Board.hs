@@ -2,21 +2,26 @@
 module JonnyH.Board.Board where
 
 import              Prelude             ((!!))
+import              Control.Arrow       ((>>>))
 import              GHC.Show
 import              Protolude            hiding (Map, show, evaluate)
 import              Data.Maybe
 import qualified    Data.List as List
-import qualified    Data.Map as Map
+import              Data.Map                    ( Map
+                                                , delete
+                                                , insert
+                                                , elems
+                                                , lookup
+                                                )
 
 import              JonnyH.Color
 import              JonnyH.Board.Direction
-import              JonnyH.Util
 import              JonnyH.Board.Square
 import              JonnyH.Piece
 
-type Map = Map.Map
-
 type Position = Map Square Piece
+
+type Move = (Square, Square)
 
 data Board = Board {
       _squares  :: [Square]
@@ -32,7 +37,7 @@ instance Ord Board where
 evaluate :: Board -> Int
 evaluate brd = sumPces whites - sumPces blacks
     where
-        (whites, blacks) = List.partition isWhite $ Map.elems pos
+        (whites, blacks) = List.partition isWhite $ elems pos
         sumPces = foldl (\acc pce -> value pce + acc) 0 :: [Piece] -> Int
         pos = _position brd
 
@@ -68,10 +73,10 @@ ranks = ranks' . _squares
 -- piece inspection
 
 occupied :: Board -> Square -> Bool
-occupied b sqr = isJust $ Map.lookup sqr $ _position b
+occupied b sqr = isJust $ lookup sqr $ _position b
 
 occupiedBy :: Square -> Board -> Maybe Piece
-occupiedBy sqr = Map.lookup sqr . _position
+occupiedBy sqr = lookup sqr . _position
 
 occupiedByColor :: Board -> Square -> Maybe Color
 occupiedByColor b sqr =
@@ -114,11 +119,15 @@ neighbor = relative 1
 
 neighborIfOccupied :: Square -> Board -> Direction -> Maybe Square
 neighborIfOccupied sqr brd dir =
-    neighbor sqr brd dir >>= wrapIf (occupied brd)
+    neighbor sqr brd dir >>= returnIf (occupied brd)
+    where
+        returnIf p v = if p v then return v else empty
 
 neighborIfNotOccupied :: Square -> Board -> Direction -> Maybe Square
 neighborIfNotOccupied sqr brd dir =
-    neighbor sqr brd dir >>= wrapIf (not . occupied brd)
+    neighbor sqr brd dir >>= returnIf (not . occupied brd)
+    where
+        returnIf p v = if p v then return v else empty
 
 -------------------------------------------------------------------------------
 -- get a sequence of squares
@@ -139,13 +148,9 @@ untilOccupied sqr b dir =
 -------------------------------------------------------------------------------
 -- modify board
 
-move :: Square -> Board -> Square -> Board
-move sqr brd sqr' =
-    let
-        pce = occupiedBy sqr brd
-        newmap = Map.delete sqr (_position brd)
-        newmap' = Map.delete sqr' newmap
-        newmap'' = Map.insert sqr' (fromJust pce) newmap'
-    in
-        board newmap''
+move :: Move -> Board -> Board
+move (src, dst) brd = board $ (delete src >>> delete dst >>> insert dst pce) pos
+    where
+        pce = fromJust $ occupiedBy src brd
+        pos = _position brd
 

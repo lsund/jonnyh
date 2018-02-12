@@ -36,7 +36,7 @@ bishopMoves sqr brd =
         apply f = foldr ((++) . f) []
         bishopMove = untilOccupied sqr brd
 
-knightMoves :: Square -> Board ->[Square]
+knightMoves :: Square -> Board -> [Square]
 knightMoves sqr brd =
             apply knightMove knightDirections
     where

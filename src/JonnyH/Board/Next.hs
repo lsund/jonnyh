@@ -13,7 +13,7 @@ import JonnyH.Moves
 -- board
 
 moveToPosition :: Board -> (Square, Square) -> Board
-moveToPosition brd (sqr, sqr') = move sqr brd sqr'
+moveToPosition brd mv = move mv brd
 
 movesToPositions :: Board -> (Square, [Square]) -> [Board]
 movesToPositions brd (sqr, sqrs) =
