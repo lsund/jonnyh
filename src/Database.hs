@@ -4,6 +4,7 @@ module Database where
 import Protolude
 
 import Database.PostgreSQL.Simple
+import PGNParser
 
 
 makeConnection :: IO Connection
@@ -11,17 +12,54 @@ makeConnection = connect defaultConnectInfo { connectDatabase = "chess" }
 
 listContents :: Connection -> IO ()
 listContents conn =
-    mapM_ print =<< ( query_ conn "select * from content" :: IO [Only Text] )
+    mapM_ print =<< ( query_ conn "select * from game" :: IO [(Int, Text)] )
 
 
-addEntry :: Connection -> IO Int64
-addEntry conn = do
-    putStrLn ("Enter a word" :: Text)
-    word <- getLine
-    execute conn "insert into content (title) values (?)" $ Only word
+insertMeta :: Connection -> Metadata -> IO Int64
+insertMeta conn dat =
+    execute conn q values
+    where
+        q =
+            "insert into game \
+            \(event, site, date, round, white, black, \
+            \result, whiteelo, blackelo, eco) values \
+            \(?,?,?,?,?,?,?,?,?,?)"
+        values = ( (tagValue . _event) dat
+                 , (tagValue . _site) dat
+                 , (tagValue . _date) dat
+                 , (tagValue . _round) dat
+                 , (tagValue . _white) dat
+                 , (tagValue . _black) dat
+                 , (tagValue . _result) dat
+                 , (tagValue . _whiteElo) dat
+                 , (tagValue . _blackElo) dat
+                 , (tagValue . _eco) dat
+                 )
+
+insertMoves :: Connection -> [MoveText] -> IO Int64
+insertMoves conn _ =
+    executeMany conn q values
+    where
+        q = "insert into move (gameid, movenumber, white, black) values (?,?,?,?)"
+        moveToTuple (Move n w b) = (1 :: Int, 1 :: Int, w, b)
+        values = map moveToTuple [Move "1" "d4" "b4", Move "2" "d4" "s5"]
+
+mock = Metadata
+        (Tag Event "Kongress")
+        (Tag Site "Frankfurt")
+        (Tag Date "1887")
+        (Tag Round "13")
+        (Tag White "Joseph")
+        (Tag Black "Berger")
+        (Tag Result "1-0")
+        (Tag WhiteElo "")
+        (Tag BlackElo "1242")
+        (Tag ECO "D37")
 
 rundb :: IO ()
 rundb = do
     conn <- makeConnection
-    _ <- addEntry conn
-    listContents conn
+    _ <- insertMeta conn mock
+    _ <- insertMoves conn []
+    return ()
+    -- listContents conn
