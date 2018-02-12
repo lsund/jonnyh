@@ -1,5 +1,5 @@
 
-module Board.Board where
+module JonnyH.Board.Board where
 
 import              Prelude             ((!!))
 import              GHC.Show
@@ -8,11 +8,11 @@ import              Data.Maybe
 import qualified    Data.List as List
 import qualified    Data.Map as Map
 
-import              Color
-import              Board.Direction
-import              Util
-import              Board.Square
-import              Piece
+import              JonnyH.Color
+import              JonnyH.Board.Direction
+import              JonnyH.Util
+import              JonnyH.Board.Square
+import              JonnyH.Piece
 
 type Map = Map.Map
 

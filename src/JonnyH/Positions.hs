@@ -1,12 +1,13 @@
 
-module Positions where
+module JonnyH.Positions where
 
 import Protolude
 import Data.Map
-import Piece
-import Color
-import Board.Square
-import Board.Board
+
+import JonnyH.Board.Board
+import JonnyH.Board.Square
+import JonnyH.Color
+import JonnyH.Piece
 
 b1 :: Board
 b1 = board $ fromList

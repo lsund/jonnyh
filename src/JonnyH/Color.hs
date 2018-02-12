@@ -1,5 +1,5 @@
 
-module Color where
+module JonnyH.Color where
 
 import Protolude
 

@@ -1,12 +1,12 @@
 
-module MinMax where
+module JonnyH.MinMax where
 
 import Protolude    hiding (evaluate)
-
-import Color
-import Board.Board
-import Board.Next
 import Data.Tree
+
+import JonnyH.Color
+import JonnyH.Board.Board
+import JonnyH.Board.Next
 
 minmax :: Int -> Tree Board -> Int
 minmax 0 (Node brd _)          = evaluate brd

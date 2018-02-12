@@ -1,9 +1,9 @@
 
-module Database where
+module JonnyH.Database where
 
 import Protolude
-
 import Database.PostgreSQL.Simple
+
 import PGNParser.PGNParser
 import PGNParser.Data.Metadata
 import PGNParser.Data.MoveText

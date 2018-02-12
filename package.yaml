@@ -1,17 +1,17 @@
-name: chess-haskell
-version: '0.1.0.0'
+name: jonnyh
+version: '0.2.0.0'
 
-description: Please see the README on Github at <https://github.com/githubuser/chess-haskell#readme>
+description: See README
 
-author: Author name here
+author: Ludvig Sundström
 
-maintainer: example@example.com
+maintainer: lud.sund@gmail.com
 
-copyright: 2018 Author name here
+copyright: 2018 Ludvig Sundström
 
 license: BSD3
 
-github: githubuser/chess-haskell
+github: lsund/jonnyh
 
 extra-source-files:
 - ChangeLog.md
@@ -34,7 +34,7 @@ library:
   source-dirs: src
 
 executables:
-  chess-haskell-exe:
+  jonnyh:
     main: Main.hs
     source-dirs: app
     ghc-options:
@@ -42,10 +42,9 @@ executables:
     - -rtsopts
     - -with-rtsopts=-N
     dependencies:
-    - chess-haskell
-
+    - jonnyh
 tests:
-  chess-haskell-test:
+  jonnyh-test:
     main: Spec.hs
     source-dirs: test
     ghc-options:
@@ -53,4 +52,4 @@ tests:
     - -rtsopts
     - -with-rtsopts=-N
     dependencies:
-    - chess-haskell
+    - jonnyh

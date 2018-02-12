@@ -1,7 +1,7 @@
 
-module Board.Square where
+module JonnyH.Board.Square where
 
-import              GHC.Show
+import GHC.Show
 import Protolude
 
 data Square = Square {

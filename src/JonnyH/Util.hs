@@ -1,5 +1,5 @@
 
-module Util where
+module JonnyH.Util where
 
 import Protolude
 

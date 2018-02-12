@@ -1,13 +1,14 @@
 
-module Board.Initial where
+module JonnyH.Board.Initial where
 
 import qualified Data.Map as Map
 
 import Protolude
-import Color
-import Board.Board
-import Board.Square
-import Piece
+
+import JonnyH.Color
+import JonnyH.Board.Board
+import JonnyH.Board.Square
+import JonnyH.Piece
 
 initialBoard :: Board
 initialBoard = board initialPosition

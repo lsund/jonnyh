@@ -1,14 +1,14 @@
 
-module Moves where
+module JonnyH.Moves where
 
 import Protolude
 import qualified Data.Map as Map
 
-import Color
-import Board.Direction
-import Board.Square
-import Board.Board
-import Piece
+import JonnyH.Color
+import JonnyH.Board.Direction
+import JonnyH.Board.Square
+import JonnyH.Board.Board
+import JonnyH.Piece
 
 -------------------------------------------------------------------------------
 -- piece moves

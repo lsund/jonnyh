@@ -1,10 +1,10 @@
 
-module Piece where
+module JonnyH.Piece where
 
-import              GHC.Show
-import              Protolude    hiding  (Type)
+import GHC.Show
+import Protolude    hiding  (Type)
 
-import              Color
+import JonnyH.Color
 
 data Type  = Pawn
            | Bishop
