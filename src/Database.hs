@@ -10,10 +10,6 @@ import PGNParser
 makeConnection :: IO Connection
 makeConnection = connect defaultConnectInfo { connectDatabase = "chess" }
 
-listContents :: Connection -> IO ()
-listContents conn =
-    mapM_ print =<< ( query_ conn "select * from game" :: IO [(Int, Text)] )
-
 
 insertMeta :: Connection -> Metadata -> IO Int64
 insertMeta conn dat =
@@ -36,20 +32,30 @@ insertMeta conn dat =
                  , (tagValue . _eco) dat
                  )
 
-insertMoves :: Connection -> [MoveText] -> IO Int64
-insertMoves conn dat =
+insertMoves :: Connection -> Int -> [MoveText] -> IO Int64
+insertMoves conn i dat =
     executeMany conn q values
     where
         q = "insert into move (gameid, movenumber, white, black) values (?,?,?,?)"
-        moveToTuple (Move n w b) = (1 :: Int, n, w, b)
+        moveToTuple (Move n w b) = (i, n, w, b)
         moveToTuple _            = (-1 :: Int, -1, "", "")
         values = map moveToTuple $ filter isMove dat
+
+maxId :: Connection -> IO Int
+maxId conn = do
+    (Only x : _) <- query_ conn "select max(id) from game" :: IO [Only Int]
+    return x
+
+insertGame :: Connection -> Game -> IO ()
+insertGame conn (Game meta moves) = do
+    _ <- insertMeta conn meta
+    i <- maxId conn
+    _ <- insertMoves conn i moves
+    return ()
 
 rundb :: IO ()
 rundb = do
     conn <- makeConnection
-    Right (Game meta moves : _) <- parseFile "resources/pgn/QGDOrthoMain.pgn"
-    _ <- insertMeta conn meta
-    _ <- insertMoves conn moves
+    Right gs <- parseFile "resources/pgn/QGDOrthoMain.pgn"
+    mapM_ (insertGame conn) gs
     return ()
-    -- listContents conn
