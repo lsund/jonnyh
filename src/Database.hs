@@ -4,7 +4,9 @@ module Database where
 import Protolude
 
 import Database.PostgreSQL.Simple
-import PGNParser
+import PGNParser.PGNParser
+import PGNParser.Data.Metadata
+import PGNParser.Data.MoveText
 
 
 makeConnection :: IO Connection
