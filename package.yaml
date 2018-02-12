@@ -23,8 +23,8 @@ dependencies:
 - split
 - text
 - containers
-- parsec
 - postgresql-simple
+- pgn-parser
 
 default-extensions:
     - NoImplicitPrelude

@@ -2,7 +2,7 @@
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 5ad45e37eb9c3ea83c96fc0230884ba0d0f3d830712e8c3fe6a7a65c30e013f8
+-- hash: 22edca5a8826d4d287159e89336bae243b48d465a6e5800a0747f4ac7d6939f4
 
 name:           chess-haskell
 version:        0.1.0.0
@@ -36,7 +36,6 @@ library
       Database
       MinMax
       Moves
-      PGNParser
       Piece
       Positions
       Test
@@ -49,7 +48,7 @@ library
   build-depends:
       base >=4.7 && <5
     , containers
-    , parsec
+    , pgn-parser
     , postgresql-simple
     , protolude
     , split
@@ -68,7 +67,7 @@ executable chess-haskell-exe
       base >=4.7 && <5
     , chess-haskell
     , containers
-    , parsec
+    , pgn-parser
     , postgresql-simple
     , protolude
     , split
@@ -88,7 +87,7 @@ test-suite chess-haskell-test
       base >=4.7 && <5
     , chess-haskell
     , containers
-    , parsec
+    , pgn-parser
     , postgresql-simple
     , protolude
     , split
