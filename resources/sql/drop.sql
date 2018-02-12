@@ -1,0 +1,2 @@
+DROP TABLE Move;
+DROP TABLE Game;

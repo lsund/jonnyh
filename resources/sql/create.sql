@@ -1,0 +1,17 @@
+CREATE TABLE Game
+(
+    ID INT PRIMARY KEY,
+    Title        varchar(64) NOT NULL
+
+);
+
+CREATE TABLE Move
+(
+    ID INT PRIMARY KEY,
+    GameID INT NOT NULL,
+    Move VARCHAR(64) NOT NULL,
+
+    FOREIGN KEY (GameID) REFERENCES Game (ID)
+
+);
+
