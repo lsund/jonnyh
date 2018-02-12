@@ -1,5 +1,5 @@
 
-module Parser where
+module PGNParser where
 
 import Prelude                                  (String)
 import Protolude                        hiding  (try, (<|>), many, option)
@@ -10,13 +10,13 @@ symbol :: String -> Parser (String, Maybe Int)
 symbol s = parsecMap (\x -> (x, Nothing)) $ string s <* spaces
 
 
-type ChessParser u = ParsecT String u Identity
+type PGNParser u = ParsecT String u Identity
 
-data Action = Move String String String | Result String String | Unfinished
+data Movetext    = Move String String String | Result String String | Unfinished
 
-data Metadata = Metadata String String
+data Tag         = Tag String String
 
-data Game = Game [Metadata] [Action]
+data Game        = Game [Tag] [Movetext]
 
 
 metaLabels :: [String]
@@ -32,11 +32,11 @@ metaLabels = [ "Event"
              , "ECO"]
 
 
-parseSingleMove :: ChessParser u String
+parseSingleMove :: PGNParser u String
 parseSingleMove = many1 (oneOf "abcdefgh12345678NBRQKxOO+-=")
 
 
-parseMove :: ChessParser u Action
+parseMove :: PGNParser u Movetext
 parseMove = do
     n <- many1 digit
     _ <- char '.'
@@ -45,22 +45,22 @@ parseMove = do
     b <- option "" parseSingleMove
     return $ Move n w b
 
-parseResult :: ChessParser u Action
+parseResult :: PGNParser u Movetext
 parseResult = do
     w <- try (string "1/2") <|> string "1" <|> string "0"
     _ <- char '-'
     b <- try (string "1/2") <|> string "1" <|> string "0"
     return $ Result w b
 
-parseUnfinished :: ChessParser u Action
+parseUnfinished :: PGNParser u Movetext
 parseUnfinished = do
     _ <- char '*'
     return Unfinished
 
-parseMoveLine :: ChessParser u [Action]
+parseMoveLine :: PGNParser u [Movetext]
 parseMoveLine = sepBy (try parseMove <|> try parseResult <|> parseUnfinished) (many $ char ' ')
 
-parseMetaLine :: ChessParser () Metadata
+parseMetaLine :: PGNParser () Tag
 parseMetaLine = do
     _ <- symbol "["
     e <- choice $ map (try . string) metaLabels
@@ -68,16 +68,16 @@ parseMetaLine = do
     _ <- symbol "\""
     s <- many $ noneOf "\""
     _ <- string "\"]\n"
-    return $ Metadata e s
+    return $ Tag e s
 
-parseGame :: ChessParser () Game
+parseGame :: PGNParser () Game
 parseGame = do
     meta  <- many1 parseMetaLine
     _     <- newline
     moves <- endBy parseMoveLine newline
     return $ Game meta (concat moves)
 
-parseGames :: ChessParser () [Game]
+parseGames :: PGNParser () [Game]
 parseGames = many parseGame
 
 parseFile :: String -> IO (Either ParseError [Game])

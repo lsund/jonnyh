@@ -2,7 +2,7 @@
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: ff07c18518c3b94d9dd9cb7165461f22bf99204b62b86d10198cc42dc907c30b
+-- hash: 5ad45e37eb9c3ea83c96fc0230884ba0d0f3d830712e8c3fe6a7a65c30e013f8
 
 name:           chess-haskell
 version:        0.1.0.0
@@ -36,7 +36,7 @@ library
       Database
       MinMax
       Moves
-      Parser
+      PGNParser
       Piece
       Positions
       Test
