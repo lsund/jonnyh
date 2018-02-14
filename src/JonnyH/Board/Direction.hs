@@ -1,7 +1,7 @@
 
 module JonnyH.Board.Direction where
 
-import Protolude
+import           Protolude
 
 data Direction  = North
                 | NorthEast

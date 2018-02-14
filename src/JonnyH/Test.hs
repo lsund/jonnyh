@@ -2,14 +2,14 @@
 module JonnyH.Test where
 
 
-import GHC.Show
-import Protolude                hiding (show)
-import qualified Data.Map as Map
+import qualified Data.Map            as Map
+import           GHC.Show
+import           Protolude           hiding (show)
 
-import JonnyH.Color
-import JonnyH.Board.Board
-import JonnyH.Board.Square
-import JonnyH.Piece
+import           JonnyH.Board.Board
+import           JonnyH.Board.Square
+import           JonnyH.Color
+import           JonnyH.Piece
 
 data Play = Play Board [Square]
 

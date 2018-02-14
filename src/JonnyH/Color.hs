@@ -1,7 +1,7 @@
 
 module JonnyH.Color where
 
-import Protolude
+import           Protolude
 
 data Color  = Black | White deriving (Show, Eq)
 

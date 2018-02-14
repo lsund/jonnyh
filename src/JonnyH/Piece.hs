@@ -1,10 +1,10 @@
 
 module JonnyH.Piece where
 
-import GHC.Show
-import Protolude    hiding  (Type)
+import           GHC.Show
+import           Protolude    hiding (Type)
 
-import JonnyH.Color
+import           JonnyH.Color
 
 data Type  = Pawn
            | Bishop
@@ -16,7 +16,7 @@ data Type  = Pawn
 
 data Piece = Piece {
       _color :: Color
-    , _type :: Type
+    , _type  :: Type
 }
 instance Show Piece where
     show (Piece Black Pawn)   = "p"

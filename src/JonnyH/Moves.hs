@@ -1,14 +1,14 @@
 
 module JonnyH.Moves where
 
-import Protolude
-import qualified Data.Map as Map
+import qualified Data.Map               as Map
+import           Protolude
 
-import JonnyH.Color
-import JonnyH.Board.Direction
-import JonnyH.Board.Square
-import JonnyH.Board.Board
-import JonnyH.Piece
+import           JonnyH.Board.Board
+import           JonnyH.Board.Direction
+import           JonnyH.Board.Square
+import           JonnyH.Color
+import           JonnyH.Piece
 
 -------------------------------------------------------------------------------
 -- piece moves
@@ -43,8 +43,8 @@ knightMoves sqr brd =
         apply f = foldr (\(x, y) acc -> maybeToList (f x y) ++ acc) []
         knightMove dir1 dir2 =
             case neighbor sqr brd dir2 of
-                Nothing  -> Nothing
-                Just s -> relative 2 s brd dir1
+                Nothing -> Nothing
+                Just s  -> relative 2 s brd dir1
 
 rookMoves :: Square -> Board -> [Square]
 rookMoves sqr brd = apply rookMove fourDirections

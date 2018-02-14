@@ -1,23 +1,18 @@
 
 module JonnyH.Board.Board where
 
-import              Prelude             ((!!))
-import              Control.Arrow       ((>>>))
-import              GHC.Show
-import              Protolude            hiding (Map, show, evaluate)
-import              Data.Maybe
-import qualified    Data.List as List
-import              Data.Map                    ( Map
-                                                , delete
-                                                , insert
-                                                , elems
-                                                , lookup
-                                                )
+import           Control.Arrow          ((>>>))
+import qualified Data.List              as List
+import           Data.Map               (Map, delete, elems, insert, lookup)
+import           Data.Maybe
+import           GHC.Show
+import           Prelude                ((!!))
+import           Protolude              hiding (Map, evaluate, show)
 
-import              JonnyH.Color
-import              JonnyH.Board.Direction
-import              JonnyH.Board.Square
-import              JonnyH.Piece
+import           JonnyH.Board.Direction
+import           JonnyH.Board.Square
+import           JonnyH.Color
+import           JonnyH.Piece
 
 type Position = Map Square Piece
 
@@ -81,8 +76,8 @@ occupiedBy sqr = lookup sqr . _position
 occupiedByColor :: Board -> Square -> Maybe Color
 occupiedByColor b sqr =
     case occupiedBy sqr b of
-        Just s -> Just (_color s)
-        Nothing  -> Nothing
+        Just s  -> Just (_color s)
+        Nothing -> Nothing
 
 notOccupiedBy :: Color -> Board -> [Square] -> [Square]
 notOccupiedBy col brd = filter (\x -> Just col /= occupiedByColor brd x)
@@ -142,7 +137,7 @@ untilOccupied sqr b dir =
     where
         nth xs n =
             case relative n sqr b dir of
-                Just s -> s : xs
+                Just s  -> s : xs
                 Nothing -> [] ++ xs
 
 -------------------------------------------------------------------------------

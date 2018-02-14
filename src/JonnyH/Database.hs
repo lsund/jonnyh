@@ -1,12 +1,12 @@
 
 module JonnyH.Database where
 
-import Protolude
-import Database.PostgreSQL.Simple
+import           Database.PostgreSQL.Simple
+import           Protolude
 
-import PGNParser.PGNParser
-import PGNParser.Data.Metadata
-import PGNParser.Data.MoveText
+import           PGNParser.Data.Metadata
+import           PGNParser.Data.MoveText
+import           PGNParser.PGNParser
 
 
 makeConnection :: IO Connection

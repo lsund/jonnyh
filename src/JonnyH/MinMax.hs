@@ -1,12 +1,12 @@
 
 module JonnyH.MinMax where
 
-import Protolude    hiding (evaluate)
-import Data.Tree
+import           Data.Tree
+import           Protolude          hiding (evaluate)
 
-import JonnyH.Color
-import JonnyH.Board.Board
-import JonnyH.Board.Next
+import           JonnyH.Board.Board
+import           JonnyH.Board.Next
+import           JonnyH.Color
 
 minmax :: Int -> Tree Board -> Int
 minmax 0 (Node brd _)          = evaluate brd
@@ -14,7 +14,7 @@ minmax depth (Node _ children) =
     maximum $ map (negate . minmax (depth - 1)) children
 
 
-data Evaluation = Evaluation { _value :: Int
+data Evaluation = Evaluation { _value    :: Int
                              , _sequence :: [Board]
                              }
 

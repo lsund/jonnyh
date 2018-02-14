@@ -1,12 +1,12 @@
 
 module JonnyH.Board.Next where
 
-import Protolude
+import           Protolude
 
-import JonnyH.Color
-import JonnyH.Board.Square
-import JonnyH.Board.Board
-import JonnyH.Moves
+import           JonnyH.Board.Board
+import           JonnyH.Board.Square
+import           JonnyH.Color
+import           JonnyH.Moves
 
 -------------------------------------------------------------------------------
 -- all legal possible positions after one move of the given color in the given
