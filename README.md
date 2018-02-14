@@ -1,3 +1,3 @@
 # Jonny Hector
 
-Named after the Swedish chess grandmaster
+Simple Chess Backend, Named after the Swedish chess grandmaster
