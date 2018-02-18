@@ -6,7 +6,7 @@ import           Data.Set                   hiding (map)
 import           Database.PostgreSQL.Simple
 import           Protolude                  hiding (toList)
 
-import JonnyH.Database.Common
+import           JonnyH.Database.Common
 import           PGNParser.Data.MoveText
 
 maxId :: Connection -> IO Int

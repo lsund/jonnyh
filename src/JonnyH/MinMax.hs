@@ -5,11 +5,11 @@ import           Data.Tree
 import           Protolude          hiding (evaluate)
 
 import           JonnyH.Board.Board
-import           JonnyH.Board.Next
+import           JonnyH.Board.Update
 import           JonnyH.Color
 
 minmax :: Int -> Tree Board -> Int
-minmax 0 (Node brd _)          = evaluate brd
+minmax 0 (Node b _)          = evaluate b
 minmax depth (Node _ children) =
     maximum $ map (negate . minmax (depth - 1)) children
 
@@ -37,10 +37,10 @@ minmax' depth (Node _ children) =
     maximum $ map (mapValue negate . minmax' (depth - 1)) children
 
 tree :: Color -> Board -> Tree Board
-tree col brd = Node brd [tree (succ col) brd' | brd' <- allPositions brd col]
+tree col b = Node b [tree (succ col) b' | b' <- allUpdates b col]
 
 tree' :: Color -> [Board] -> Tree [Board]
 tree' col (b : bs) =
-    Node (b : bs) [tree' (succ col) (b' : b : bs) | b' <- allPositions b col]
+    Node (b : bs) [tree' (succ col) (b' : b : bs) | b' <- allUpdates b col]
 tree' _ [] = Node [] []
 

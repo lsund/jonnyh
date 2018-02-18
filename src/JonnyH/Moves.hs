@@ -82,10 +82,11 @@ movesFrom brd sqr =
 -------------------------------------------------------------------------------
 -- all legal moves after one move of the given color in the given board
 
-allMoves :: Color -> Board -> [(Square, [Square])]
-allMoves col brd = zip filteredSquares $ map (movesFrom brd) filteredSquares
+allMoves :: Color -> Board -> [(Square, Square)]
+allMoves col brd = concatMap (\(y, ys) -> zip (repeat y) ys) allMovesFrom
     where
         filteredMap = Map.filter (ofColor col) $ _position brd
         filteredSquares = Map.keys filteredMap
         ofColor col'' (Piece col' _) = col'' == col'
+        allMovesFrom = zip filteredSquares $ map (movesFrom brd) filteredSquares
 

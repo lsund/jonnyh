@@ -1,9 +1,8 @@
 
 module JonnyH.Board.Board where
 
-import           Control.Arrow          ((>>>))
 import qualified Data.List              as List
-import           Data.Map               (Map, delete, elems, insert, lookup)
+import           Data.Map               (Map, elems, lookup)
 import           Data.Maybe
 import           GHC.Show
 import           Prelude                ((!!))
@@ -139,13 +138,4 @@ untilOccupied sqr b dir =
             case relative n sqr b dir of
                 Just s  -> s : xs
                 Nothing -> [] ++ xs
-
--------------------------------------------------------------------------------
--- modify board
-
-move :: Move -> Board -> Board
-move (src, dst) brd = board $ (delete src >>> delete dst >>> insert dst pce) pos
-    where
-        pce = fromJust $ occupiedBy src brd
-        pos = _position brd
 
