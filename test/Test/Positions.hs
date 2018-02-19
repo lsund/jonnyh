@@ -1,5 +1,5 @@
 
-module JonnyH.Positions where
+module Test.Positions where
 
 import           Data.Map
 import           Protolude
@@ -9,11 +9,11 @@ import           JonnyH.Board.Square
 import           JonnyH.Color
 import           JonnyH.Piece
 
+
 b1 :: Board
 b1 = board $ fromList
     [
-      (Square 'c' 8, Piece Black Queen)
-    , (Square 'c' 4, Piece White Pawn)
+      (Square 'c' 5, Piece Black Knight)
     ]
 
 b2 :: Board
@@ -36,3 +36,4 @@ b3 = board $ fromList
     , (Square 'h' 6, Piece Black Pawn)
     , (Square 'h' 8, Piece Black King)
     ]
+

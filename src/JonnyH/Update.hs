@@ -1,12 +1,12 @@
 
-module JonnyH.Board.Update where
+module JonnyH.Update where
 
 import           Protolude
 import           Data.Maybe
 import           Control.Arrow          ((>>>))
 import           Data.Map               (delete, insert)
 
-import           JonnyH.Board.Board
+import           JonnyH.Board
 import           JonnyH.Color
 import           JonnyH.Moves
 

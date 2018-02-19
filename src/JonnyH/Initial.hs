@@ -1,12 +1,12 @@
 
-module JonnyH.Board.Initial where
+module JonnyH.Initial where
 
 import qualified Data.Map            as Map
 
 import           Protolude
 
-import           JonnyH.Board.Board
-import           JonnyH.Board.Square
+import           JonnyH.Board
+import           JonnyH.Square
 import           JonnyH.Color
 import           JonnyH.Piece
 

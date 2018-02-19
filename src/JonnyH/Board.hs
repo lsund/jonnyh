@@ -1,5 +1,5 @@
 
-module JonnyH.Board.Board where
+module JonnyH.Board where
 
 import qualified Data.List              as List
 import           Data.Map               (Map, elems, lookup)
@@ -8,8 +8,8 @@ import           GHC.Show
 import           Prelude                ((!!))
 import           Protolude              hiding (Map, evaluate, show)
 
-import           JonnyH.Board.Direction
-import           JonnyH.Board.Square
+import           JonnyH.Direction
+import           JonnyH.Square
 import           JonnyH.Color
 import           JonnyH.Piece
 

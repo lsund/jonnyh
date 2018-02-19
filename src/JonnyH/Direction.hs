@@ -1,5 +1,5 @@
 
-module JonnyH.Board.Direction where
+module JonnyH.Direction where
 
 import           Protolude
 

@@ -1,5 +1,5 @@
 
-module JonnyH.Board.Square where
+module JonnyH.Square where
 
 import           GHC.Show
 import           Protolude

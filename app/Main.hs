@@ -3,9 +3,9 @@ module Main where
 
 import           Protolude
 
-import           JonnyH.Board.Initial
-import           JonnyH.Board.Update
-import           JonnyH.Board.Square
+import           JonnyH.Initial
+import           JonnyH.Update
+import           JonnyH.Square
 -- import           JonnyH.Color
 -- import           JonnyH.MinMax
 -- import           JonnyH.Positions

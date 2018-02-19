@@ -4,8 +4,8 @@ module JonnyH.MinMax where
 import           Data.Tree
 import           Protolude          hiding (evaluate)
 
-import           JonnyH.Board.Board
-import           JonnyH.Board.Update
+import           JonnyH.Board
+import           JonnyH.Update
 import           JonnyH.Color
 
 minmax :: Int -> Tree Board -> Int

@@ -4,14 +4,12 @@ module JonnyH.Moves where
 import qualified Data.Map               as Map
 import           Protolude
 
-import           JonnyH.Board.Board
-import           JonnyH.Board.Direction
-import           JonnyH.Board.Square
+import           JonnyH.Board
+import           JonnyH.Direction
+import           JonnyH.Square
 import           JonnyH.Color
 import           JonnyH.Piece
 
--------------------------------------------------------------------------------
--- piece moves
 
 pawnMoves :: Square -> Color -> Board -> [Square]
 pawnMoves sqr@(Square f r) White brd =
@@ -29,16 +27,16 @@ pawnMoves sqr@(Square f r) Black brd =
             ]
             ++ if r == 7 then [Just $ Square f 5 | _rank sqr == 7] else []
 
+
 bishopMoves :: Square -> Board -> [Square]
-bishopMoves sqr brd =
-        apply bishopMove diagDirections
+bishopMoves sqr brd = apply bishopMove diagDirections
     where
         apply f = foldr ((++) . f) []
         bishopMove = untilOccupied sqr brd
 
+
 knightMoves :: Square -> Board -> [Square]
-knightMoves sqr brd =
-            apply knightMove knightDirections
+knightMoves sqr brd = apply knightMove knightDirections
     where
         apply f = foldr (\(x, y) acc -> maybeToList (f x y) ++ acc) []
         knightMove dir1 dir2 =
@@ -46,15 +44,18 @@ knightMoves sqr brd =
                 Nothing -> Nothing
                 Just s  -> relative 2 s brd dir1
 
+
 rookMoves :: Square -> Board -> [Square]
 rookMoves sqr brd = apply rookMove fourDirections
     where
         apply f = foldr ((++) . f) []
         rookMove = untilOccupied sqr brd
 
+
 queenMoves :: Square -> Board -> [Square]
 queenMoves sqr brd =
     bishopMoves sqr brd ++ rookMoves sqr brd
+
 
 kingMoves :: Square -> Board -> [Square]
 kingMoves sqr brd =
@@ -63,8 +64,6 @@ kingMoves sqr brd =
         apply f = foldr (\x acc -> maybeToList (f x) ++ acc) []
         kingMove = neighbor sqr brd
 
--------------------------------------------------------------------------------
--- Moves from a square
 
 movesFrom :: Board -> Square -> [Square]
 movesFrom brd sqr =
@@ -79,8 +78,6 @@ movesFrom brd sqr =
                 King   -> kingMoves sqr brd
         Nothing             -> []
 
--------------------------------------------------------------------------------
--- all legal moves after one move of the given color in the given board
 
 allMoves :: Color -> Board -> [(Square, Square)]
 allMoves col brd = concatMap (\(y, ys) -> zip (repeat y) ys) allMovesFrom

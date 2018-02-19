@@ -2,7 +2,7 @@
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: d1bdbac7b5d94ac2994d8dc002818a00f401c455d152abcdf48145ca66ff7a3e
+-- hash: a8aa55a1571a0026fa86b900c28c8cf77884b97764b6cad9fdbb51a698aefda7
 
 name:           jonnyh
 version:        0.2.0.0
@@ -30,17 +30,16 @@ library
       JonnyH.Board.Board
       JonnyH.Board.Direction
       JonnyH.Board.Initial
-      JonnyH.Board.Next
       JonnyH.Board.Square
+      JonnyH.Board.Update
       JonnyH.Color
-      JonnyH.Database.Database
+      JonnyH.Database.Common
       JonnyH.Database.Query
       JonnyH.Database.Update
       JonnyH.MinMax
       JonnyH.Moves
       JonnyH.Piece
       JonnyH.Positions
-      JonnyH.Test
       JonnyH.Util
   other-modules:
       Paths_jonnyh
@@ -80,6 +79,8 @@ test-suite jonnyh-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
+      Test.Moves
+      Test.Positions
       Paths_jonnyh
   hs-source-dirs:
       test
