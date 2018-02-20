@@ -8,7 +8,6 @@ import           Data.Map               (delete, insert)
 
 import           JonnyH.Board
 import           JonnyH.Color
-import           JonnyH.Moves
 
 
 update :: Board -> Move -> Board

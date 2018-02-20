@@ -1,17 +1,29 @@
 
 module JonnyH.Board where
 
-import qualified Data.List              as List
-import           Data.Map               (Map, elems, lookup)
+import qualified Data.List     as List
+import           Data.Map      (Map, elems, lookup)
+import qualified Data.Map      as Map
 import           Data.Maybe
 import           GHC.Show
-import           Prelude                ((!!))
-import           Protolude              hiding (Map, evaluate, show)
+import           Prelude       ((!!))
+import           Protolude     hiding (Map, evaluate, show)
 
-import           JonnyH.Direction
-import           JonnyH.Square
+
 import           JonnyH.Color
 import           JonnyH.Piece
+import           JonnyH.Square
+
+
+data Direction  = North
+                | NorthEast
+                | East
+                | SouthEast
+                | South
+                | SouthWest
+                | West
+                | NorthWest
+                deriving (Show)
 
 type Position = Map Square Piece
 
@@ -27,19 +39,6 @@ instance Eq Board where
 
 instance Ord Board where
     x `compare` y = evaluate x `compare` evaluate y
-
-evaluate :: Board -> Int
-evaluate brd = sumPces whites - sumPces blacks
-    where
-        (whites, blacks) = List.partition isWhite $ elems pos
-        sumPces = foldl (\acc pce -> value pce + acc) 0 :: [Piece] -> Int
-        pos = _position brd
-
-board :: Position -> Board
-board = Board [Square f r | f <- ['a'..'h'], r <- [1..8]]
-
--------------------------------------------------------------------------------
--- display
 
 
 instance Show Board where
@@ -63,23 +62,122 @@ ranks = ranks' . _squares
         consIf True e acc = e : acc
         consIf _ _ acc    = acc
 
--------------------------------------------------------------------------------
--- piece inspection
 
-occupied :: Board -> Square -> Bool
-occupied b sqr = isJust $ lookup sqr $ _position b
+pawnMoves :: Square -> Color -> Board -> [Square]
+pawnMoves sqr@(Square f r) White b =
+        catMaybes $
+            [   neighbor sqr b North
+            ,   neighborIfOccupied sqr b NorthWest
+            ,   neighborIfOccupied sqr b NorthEast
+            ]
+            ++ if r == 2 then [Just $ Square f 4 | _rank sqr == 2] else []
+pawnMoves sqr@(Square f r) Black b =
+        catMaybes $
+            [   neighbor sqr b South
+            ,   neighborIfOccupied sqr b SouthWest
+            ,   neighborIfOccupied sqr b SouthEast
+            ]
+            ++ if r == 7 then [Just $ Square f 5 | _rank sqr == 7] else []
+
+
+bishopMoves :: Square -> Board -> [Square]
+bishopMoves sqr b = apply bishopMove [NorthEast, SouthEast, SouthWest, NorthWest]
+    where
+        apply f = foldr ((++) . f) []
+        bishopMove = untilOccupied sqr b
+
+
+knightMoves :: Square -> Board -> [Square]
+knightMoves sqr b = apply knightMove dirs
+    where
+        apply f = foldr (\(x, y) acc -> maybeToList (f x y) ++ acc) []
+        knightMove dir1 dir2 =
+            case neighbor sqr b dir2 of
+                Nothing -> Nothing
+                Just s  -> relative 2 s b dir1
+        dirs = [ (North, East)
+               , (North, West)
+               , (East, North)
+               , (East, South)
+               , (South, East)
+               , (South, West)
+               , (West, North)
+               , (West, South)
+               ]
+
+
+rookMoves :: Square -> Board -> [Square]
+rookMoves sqr b = apply rookMove [North, East, South, West]
+    where
+        apply f = foldr ((++) . f) []
+        rookMove = untilOccupied sqr b
+
+
+queenMoves :: Square -> Board -> [Square]
+queenMoves sqr b =
+    bishopMoves sqr b ++ rookMoves sqr b
+
+
+kingMoves :: Square -> Board -> [Square]
+kingMoves sqr b =
+    apply kingMove dirs
+    where
+        apply f = foldr (\x acc -> maybeToList (f x) ++ acc) []
+        kingMove = neighbor sqr b
+        dirs = [ North
+               , NorthEast
+               , East
+               , SouthEast
+               , South
+               , SouthWest
+               , West
+               , NorthWest]
+
+
+movesFrom :: Board -> Square -> [Square]
+movesFrom b sqr =
+    case Map.lookup sqr $ _position b of
+        Just (Piece col pce) ->
+            notOccupiedBy col b $ case pce of
+                Pawn   -> notOccupiedBy (succ col) b $ pawnMoves sqr col b
+                Bishop -> bishopMoves sqr b
+                Knight -> knightMoves sqr b
+                Rook   -> rookMoves sqr b
+                Queen  -> queenMoves sqr b
+                King   -> kingMoves sqr b
+        Nothing             -> []
+
+
+allMoves :: Color -> Board -> [(Square, Square)]
+allMoves col b = concatMap (\(y, ys) -> zip (repeat y) ys) allMovesFrom
+    where
+        filteredMap = Map.filter (ofColor col) $ _position b
+        filteredSquares = Map.keys filteredMap
+        ofColor col'' (Piece col' _) = col'' == col'
+        allMovesFrom = zip filteredSquares $ map (movesFrom b) filteredSquares
+
+evaluate :: Board -> Int
+evaluate b = sumPces whites - sumPces blacks
+    where
+        (whites, blacks) = List.partition isWhite $ elems pos
+        sumPces = foldl (\acc pce -> value pce + acc) 0 :: [Piece] -> Int
+        pos = _position b
+
+board :: Position -> Board
+board = Board [Square f r | f <- ['a'..'h'], r <- [1..8]]
+
+
+occupied :: Square -> Board -> Bool
+occupied sqr = isJust . lookup sqr . _position
 
 occupiedBy :: Square -> Board -> Maybe Piece
 occupiedBy sqr = lookup sqr . _position
 
-occupiedByColor :: Board -> Square -> Maybe Color
-occupiedByColor b sqr =
-    case occupiedBy sqr b of
-        Just s  -> Just (_color s)
-        Nothing -> Nothing
+occupiedByColor :: Square -> Board -> Maybe Color
+occupiedByColor sqr b = _color <$> occupiedBy sqr b
 
 notOccupiedBy :: Color -> Board -> [Square] -> [Square]
-notOccupiedBy col brd = filter (\x -> Just col /= occupiedByColor brd x)
+notOccupiedBy col b = filter (\x -> Just col /= occupiedByColor x b)
 
 -------------------------------------------------------------------------------
 -- get a single square
@@ -112,14 +210,14 @@ neighbor :: Square -> Board -> Direction -> Maybe Square
 neighbor = relative 1
 
 neighborIfOccupied :: Square -> Board -> Direction -> Maybe Square
-neighborIfOccupied sqr brd dir =
-    neighbor sqr brd dir >>= returnIf (occupied brd)
+neighborIfOccupied sqr b dir =
+    neighbor sqr b dir >>= returnIf (`occupied` b)
     where
         returnIf p v = if p v then return v else empty
 
 neighborIfNotOccupied :: Square -> Board -> Direction -> Maybe Square
-neighborIfNotOccupied sqr brd dir =
-    neighbor sqr brd dir >>= returnIf (not . occupied brd)
+neighborIfNotOccupied sqr b dir =
+    neighbor sqr b dir >>= returnIf (not . flip occupied b)
     where
         returnIf p v = if p v then return v else empty
 
@@ -132,7 +230,7 @@ takeWhileOneMore p = foldr (\x ys -> if p x then x : ys else [x]) []
 untilOccupied :: Square -> Board -> Direction -> [Square]
 untilOccupied sqr b dir =
     let reverseSeq = foldl nth [] [1..8]
-    in reverse $ takeWhileOneMore (not . occupied b) (reverse reverseSeq)
+    in reverse $ takeWhileOneMore (not . flip occupied b) (reverse reverseSeq)
     where
         nth xs n =
             case relative n sqr b dir of
