@@ -2,7 +2,7 @@
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: a8aa55a1571a0026fa86b900c28c8cf77884b97764b6cad9fdbb51a698aefda7
+-- hash: 35097f8078844630295811b61d86b88cf7918306d1e775dc8639d36e4697ecb8
 
 name:           jonnyh
 version:        0.2.0.0
@@ -27,20 +27,19 @@ source-repository head
 
 library
   exposed-modules:
-      JonnyH.Board.Board
-      JonnyH.Board.Direction
-      JonnyH.Board.Initial
-      JonnyH.Board.Square
-      JonnyH.Board.Update
+      JonnyH.Board
       JonnyH.Color
       JonnyH.Database.Common
       JonnyH.Database.Query
       JonnyH.Database.Update
+      JonnyH.Direction
+      JonnyH.Initial
       JonnyH.MinMax
+      JonnyH.MoveParser
       JonnyH.Moves
       JonnyH.Piece
-      JonnyH.Positions
-      JonnyH.Util
+      JonnyH.Square
+      JonnyH.Update
   other-modules:
       Paths_jonnyh
   hs-source-dirs:
