@@ -25,6 +25,7 @@ dependencies:
 - containers
 - postgresql-simple
 - pgn-parser
+- HUnit
 
 default-extensions:
     - NoImplicitPrelude

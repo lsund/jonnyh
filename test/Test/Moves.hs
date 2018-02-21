@@ -1,10 +1,17 @@
 
 module Test.Moves where
 
-import JonnyH.Board.Square
-import JonnyH.Moves
+import           Test.HUnit
 
-import Test.Positions
+import           JonnyH.Board
+import           JonnyH.Square
 
-test = knightMoves (Square 'c' 5) b2
+import           Test.Positions
+
+
+testKnight = TestCase (assertEqual "" ms m1)
+    where ms = knightMoves (Square 'c' 5) p1
+
+
+tests = testKnight
 

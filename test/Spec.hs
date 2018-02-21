@@ -1,5 +1,13 @@
 
 import Protolude
 
+import Test.HUnit
+
+import Test.Moves
+
+
+runTests :: IO Counts
+runTests = runTestTT tests
+
 main :: IO ()
-main = putStrLn ("Test suite not yet implemented" :: Text)
+main = runTests >>= print

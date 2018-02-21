@@ -2,7 +2,7 @@
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 35031ce9e91bacfe164830f10b6ce7469de97c100f0f89a4501625783b9eb318
+-- hash: d5be8b792e871929c24b165b4660e3e73e1612397466844470ff8ed95a5b0918
 
 name:           jonnyh
 version:        0.2.0.0
@@ -44,7 +44,8 @@ library
       src
   default-extensions: NoImplicitPrelude OverloadedStrings
   build-depends:
-      base >=4.7 && <5
+      HUnit
+    , base >=4.7 && <5
     , containers
     , pgn-parser
     , postgresql-simple
@@ -62,7 +63,8 @@ executable jonnyh
   default-extensions: NoImplicitPrelude OverloadedStrings
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      base >=4.7 && <5
+      HUnit
+    , base >=4.7 && <5
     , containers
     , jonnyh
     , pgn-parser
@@ -84,7 +86,8 @@ test-suite jonnyh-test
   default-extensions: NoImplicitPrelude OverloadedStrings
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      base >=4.7 && <5
+      HUnit
+    , base >=4.7 && <5
     , containers
     , jonnyh
     , pgn-parser
