@@ -1,5 +1,5 @@
 
-module JonnyH.Piece where
+module JonnyH.Piece.Common where
 
 import           GHC.Show
 import           Protolude    hiding (Type)

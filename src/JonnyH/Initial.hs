@@ -8,7 +8,7 @@ import           Protolude
 import           JonnyH.Board
 import           JonnyH.Square
 import           JonnyH.Color
-import           JonnyH.Piece
+import           JonnyH.Piece.Common
 
 initialBoard :: Board
 initialBoard = board initialPosition

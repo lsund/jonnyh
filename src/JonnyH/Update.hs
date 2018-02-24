@@ -1,13 +1,14 @@
 
 module JonnyH.Update where
 
-import           Protolude
+import           Control.Arrow ((>>>))
+import           Data.Map      (delete, insert)
 import           Data.Maybe
-import           Control.Arrow          ((>>>))
-import           Data.Map               (delete, insert)
+import           Protolude
 
 import           JonnyH.Board
 import           JonnyH.Color
+import           JonnyH.Moves
 
 
 update :: Board -> Move -> Board

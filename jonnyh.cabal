@@ -2,7 +2,7 @@
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: d5be8b792e871929c24b165b4660e3e73e1612397466844470ff8ed95a5b0918
+-- hash: 51b77d96d0912ee3e55509af93b21c187c6f3a5ce7db976af28ac9dff652d709
 
 name:           jonnyh
 version:        0.2.0.0
@@ -35,7 +35,9 @@ library
       JonnyH.Initial
       JonnyH.MinMax
       JonnyH.MoveParser
-      JonnyH.Piece
+      JonnyH.Moves
+      JonnyH.Piece.Common
+      JonnyH.Piece.King
       JonnyH.Square
       JonnyH.Update
   other-modules:

@@ -1,17 +1,15 @@
 
 module JonnyH.Board where
 
-import qualified Data.List     as List
-import           Data.Map      (Map, elems, lookup)
-import qualified Data.Map      as Map
-import           Data.Maybe
+import qualified Data.List         as List
+import           Data.Map          (Map, elems, lookup)
 import           GHC.Show
-import           Prelude       ((!!))
-import           Protolude     hiding (Map, evaluate, show)
+import           Prelude           ((!!))
+import           Protolude         hiding (Map, evaluate, show)
 
 
 import           JonnyH.Color
-import           JonnyH.Piece
+import           JonnyH.Piece.Common
 import           JonnyH.Square
 
 
@@ -53,6 +51,7 @@ instance Show Board where
                 case occupiedBy sqr b' of
                     Just pce -> "[" ++ show pce ++ "]"
                     Nothing  -> "[ ]"
+
 
 ranks :: Board -> [[Square]]
 ranks = ranks' . _squares
@@ -117,44 +116,6 @@ queenMoves :: Square -> Board -> [Square]
 queenMoves sqr b =
     bishopMoves sqr b ++ rookMoves sqr b
 
-
-kingMoves :: Square -> Board -> [Square]
-kingMoves sqr b =
-    apply kingMove dirs
-    where
-        apply f = foldr (\x acc -> maybeToList (f x) ++ acc) []
-        kingMove = neighbor sqr b
-        dirs = [ North
-               , NorthEast
-               , East
-               , SouthEast
-               , South
-               , SouthWest
-               , West
-               , NorthWest]
-
-
-movesFrom :: Board -> Square -> [Square]
-movesFrom b sqr =
-    case Map.lookup sqr $ _position b of
-        Just (Piece col pce) ->
-            notOccupiedBy col b $ case pce of
-                Pawn   -> notOccupiedBy (succ col) b $ pawnMoves sqr col b
-                Bishop -> bishopMoves sqr b
-                Knight -> knightMoves sqr b
-                Rook   -> rookMoves sqr b
-                Queen  -> queenMoves sqr b
-                King   -> kingMoves sqr b
-        Nothing             -> []
-
-
-allMoves :: Color -> Board -> [(Square, Square)]
-allMoves col b = concatMap (\(y, ys) -> zip (repeat y) ys) allMovesFrom
-    where
-        filteredMap = Map.filter (ofColor col) $ _position b
-        filteredSquares = Map.keys filteredMap
-        ofColor col'' (Piece col' _) = col'' == col'
-        allMovesFrom = zip filteredSquares $ map (movesFrom b) filteredSquares
 
 evaluate :: Board -> Int
 evaluate b = sumPces whites - sumPces blacks
