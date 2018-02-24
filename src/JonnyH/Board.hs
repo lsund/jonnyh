@@ -1,27 +1,18 @@
 
 module JonnyH.Board where
 
-import qualified Data.List         as List
-import           Data.Map          (Map, elems, lookup)
+import qualified Data.List           as List
+import           Data.Map            (Map, elems, lookup)
 import           GHC.Show
-import           Prelude           ((!!))
-import           Protolude         hiding (Map, evaluate, show)
+import           Prelude             ((!!))
+import           Protolude           hiding (Map, evaluate, show)
 
 
 import           JonnyH.Color
+import           JonnyH.Direction
 import           JonnyH.Piece.Common
 import           JonnyH.Square
 
-
-data Direction  = North
-                | NorthEast
-                | East
-                | SouthEast
-                | South
-                | SouthWest
-                | West
-                | NorthWest
-                deriving (Show)
 
 type Position = Map Square Piece
 
@@ -60,61 +51,6 @@ ranks = ranks' . _squares
         ofRank r          = foldr (\s acc -> consIf (_rank s == r) s acc) []
         consIf True e acc = e : acc
         consIf _ _ acc    = acc
-
-
-pawnMoves :: Square -> Color -> Board -> [Square]
-pawnMoves sqr@(Square f r) White b =
-        catMaybes $
-            [   neighbor sqr b North
-            ,   neighborIfOccupied sqr b NorthWest
-            ,   neighborIfOccupied sqr b NorthEast
-            ]
-            ++ if r == 2 then [Just $ Square f 4 | _rank sqr == 2] else []
-pawnMoves sqr@(Square f r) Black b =
-        catMaybes $
-            [   neighbor sqr b South
-            ,   neighborIfOccupied sqr b SouthWest
-            ,   neighborIfOccupied sqr b SouthEast
-            ]
-            ++ if r == 7 then [Just $ Square f 5 | _rank sqr == 7] else []
-
-
-bishopMoves :: Square -> Board -> [Square]
-bishopMoves sqr b = apply bishopMove [NorthEast, SouthEast, SouthWest, NorthWest]
-    where
-        apply f = foldr ((++) . f) []
-        bishopMove = untilOccupied sqr b
-
-
-knightMoves :: Square -> Board -> [Square]
-knightMoves sqr b = apply knightMove dirs
-    where
-        apply f = foldr (\(x, y) acc -> maybeToList (f x y) ++ acc) []
-        knightMove dir1 dir2 =
-            case neighbor sqr b dir2 of
-                Nothing -> Nothing
-                Just s  -> relative 2 s b dir1
-        dirs = [ (North, East)
-               , (North, West)
-               , (East, North)
-               , (East, South)
-               , (South, East)
-               , (South, West)
-               , (West, North)
-               , (West, South)
-               ]
-
-
-rookMoves :: Square -> Board -> [Square]
-rookMoves sqr b = apply rookMove [North, East, South, West]
-    where
-        apply f = foldr ((++) . f) []
-        rookMove = untilOccupied sqr b
-
-
-queenMoves :: Square -> Board -> [Square]
-queenMoves sqr b =
-    bishopMoves sqr b ++ rookMoves sqr b
 
 
 evaluate :: Board -> Int

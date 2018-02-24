@@ -1,10 +1,11 @@
 
 module JonnyH.Piece.King where
 
-import Protolude
+import           Protolude
 
-import           JonnyH.Square
 import           JonnyH.Board
+import           JonnyH.Direction
+import           JonnyH.Square
 
 moves :: Square -> Board -> [Square]
 moves sqr b =
