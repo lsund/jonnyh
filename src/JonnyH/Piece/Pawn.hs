@@ -26,3 +26,6 @@ moves sqr@(Square f r) Black b =
             ++ if r == 7 then [Just $ Square f 5 | _rank sqr == 7] else []
 
 
+-- source :: Color -> Square -> Board -> Maybe Square
+source c dst b = [relative 1 dst b dir, relative 2 dst b dir]
+    where dir = case c of White -> South; Black -> North

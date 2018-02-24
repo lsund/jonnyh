@@ -5,9 +5,9 @@ import           Data.Map
 import           Protolude
 
 import           JonnyH.Board
-import           JonnyH.Square
 import           JonnyH.Color
-import           JonnyH.Piece
+import           JonnyH.Piece.Common
+import           JonnyH.Square
 
 
 p1 :: Board

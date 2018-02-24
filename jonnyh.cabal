@@ -2,7 +2,7 @@
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 05b96b44c88417464c40120afe1bd6d863995199cb9077c750277cb5948c7a6f
+-- hash: 131575d6246ee767945c038038da4354df14a5c91edb3bf2bd703994b2a05e9c
 
 name:           jonnyh
 version:        0.2.0.0
@@ -87,6 +87,7 @@ test-suite jonnyh-test
   main-is: Spec.hs
   other-modules:
       Test.Moves
+      Test.Piece.Pawn
       Test.Positions
       Paths_jonnyh
   hs-source-dirs:
