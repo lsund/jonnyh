@@ -9,7 +9,7 @@ import           JonnyH.Color
 import           JonnyH.Piece.Common
 import           JonnyH.Square
 
-
+-- Alone knight in the middle of board
 p1 :: Board
 p1 = board $ fromList
     [

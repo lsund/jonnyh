@@ -53,14 +53,14 @@ evaluate b = sumPces whites - sumPces blacks
 occupied :: Square -> Board -> Bool
 occupied sqr = isJust . lookup sqr . _position
 
-occupiedBy :: Square -> Board -> Maybe Piece
-occupiedBy sqr = lookup sqr . _position
+pieceAt :: Square -> Board -> Maybe Piece
+pieceAt sqr = lookup sqr . _position
 
-occupiedByColor :: Square -> Board -> Maybe Color
-occupiedByColor sqr b = _color <$> occupiedBy sqr b
+colorAt :: Square -> Board -> Maybe Color
+colorAt sqr b = _color <$> pieceAt sqr b
 
 notOccupiedBy :: Color -> Board -> [Square] -> [Square]
-notOccupiedBy col b = filter (\x -> Just col /= occupiedByColor x b)
+notOccupiedBy col b = filter (\x -> Just col /= colorAt x b)
 
 
 -------------------------------------------------------------------------------
@@ -135,7 +135,7 @@ instance Show Board where
             rsRep = concatMap (strRep b)
             rsRep' = map ((++ "\n") . rsRep) rs
             strRep b' sqr =
-                case occupiedBy sqr b' of
+                case pieceAt sqr b' of
                     Just pce -> "[" ++ show pce ++ "]"
                     Nothing  -> "[ ]"
 

@@ -14,7 +14,7 @@ import           JonnyH.Moves
 update :: Board -> Move -> Board
 update brd (src, dst) = board $ (delete src >>> delete dst >>> insert dst pce) pos
     where
-        pce = fromJust $ occupiedBy src brd
+        pce = fromJust $ pieceAt src brd
         pos = _position brd
 
 
