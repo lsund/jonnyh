@@ -1,7 +1,7 @@
 
 module JonnyH.Piece.Pawn where
 
--- import           Control.Monad.Extra
+import           Control.Monad.Extra
 import           Data.Maybe
 import           Protolude
 
@@ -39,7 +39,7 @@ source c dst b =
         preceedingSquares = [relative 1 dst b dir, relative 2 dst b dir]
         preceedingPieces  = filter (isJust . fst) $ map squareToPiece preceedingSquares
     in
-        filterM (fmap correctPiece <$> fst) preceedingPieces
+        fromJust $ map snd <$> filterM (fmap correctPiece <$> fst) preceedingPieces
     where
         squareToPiece sqr     = (maybe Nothing (`pieceAt` b) sqr, sqr)
         correctPiece x = isPawn x && (_color x == White)
