@@ -26,6 +26,7 @@ dependencies:
 - postgresql-simple
 - pgn-parser
 - HUnit
+- extra
 
 default-extensions:
     - NoImplicitPrelude

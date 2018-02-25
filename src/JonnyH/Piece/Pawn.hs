@@ -1,11 +1,14 @@
 
 module JonnyH.Piece.Pawn where
 
+-- import           Control.Monad.Extra
+import           Data.Maybe
 import           Protolude
 
 import           JonnyH.Board
 import           JonnyH.Color
 import           JonnyH.Direction
+import           JonnyH.Piece.Common
 import           JonnyH.Square
 
 
@@ -25,7 +28,20 @@ moves sqr@(Square f r) Black b =
             ]
             ++ if r == 7 then [Just $ Square f 5 | _rank sqr == 7] else []
 
+isPawn :: Piece -> Bool
+isPawn (Piece _ Pawn) = True
+isPawn _              = False
 
 -- source :: Color -> Square -> Board -> Maybe Square
-source c dst b = [relative 1 dst b dir, relative 2 dst b dir]
-    where dir = case c of White -> South; Black -> North
+source c dst b =
+    let
+        dir               = case c of White -> South; Black -> North
+        preceedingSquares = [relative 1 dst b dir, relative 2 dst b dir]
+        preceedingPieces  = filter (isJust . fst) $ map squareToPiece preceedingSquares
+    in
+        filterM (fmap correctPiece <$> fst) preceedingPieces
+    where
+        squareToPiece sqr     = (maybe Nothing (`pieceAt` b) sqr, sqr)
+        correctPiece x = isPawn x && (_color x == White)
+
+

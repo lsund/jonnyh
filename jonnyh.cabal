@@ -2,7 +2,7 @@
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 131575d6246ee767945c038038da4354df14a5c91edb3bf2bd703994b2a05e9c
+-- hash: bb2426ad4fba2842f393c342378ad92b4f0e45c47d06761c797861ef5d7a258e
 
 name:           jonnyh
 version:        0.2.0.0
@@ -46,6 +46,7 @@ library
       JonnyH.Piece.Rook
       JonnyH.Square
       JonnyH.Update
+      JonnyH.Util
   other-modules:
       Paths_jonnyh
   hs-source-dirs:
@@ -55,6 +56,7 @@ library
       HUnit
     , base >=4.7 && <5
     , containers
+    , extra
     , pgn-parser
     , postgresql-simple
     , protolude
@@ -74,6 +76,7 @@ executable jonnyh
       HUnit
     , base >=4.7 && <5
     , containers
+    , extra
     , jonnyh
     , pgn-parser
     , postgresql-simple
@@ -98,6 +101,7 @@ test-suite jonnyh-test
       HUnit
     , base >=4.7 && <5
     , containers
+    , extra
     , jonnyh
     , pgn-parser
     , postgresql-simple

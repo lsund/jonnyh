@@ -62,7 +62,6 @@ colorAt sqr b = _color <$> pieceAt sqr b
 notOccupiedBy :: Color -> Board -> [Square] -> [Square]
 notOccupiedBy col b = filter (\x -> Just col /= colorAt x b)
 
-
 -------------------------------------------------------------------------------
 -- Get a square
 
