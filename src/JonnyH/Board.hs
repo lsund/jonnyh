@@ -108,14 +108,10 @@ neighborIfNotOccupied sqr b dir =
         returnIf p v = if p v then return v else empty
 
 
-takeWhileOneMore :: (a -> Bool) -> [a] -> [a]
-takeWhileOneMore p = foldr (\x ys -> if p x then x : ys else [x]) []
-
-
 untilOccupied :: Square -> Board -> Direction -> [Square]
 untilOccupied sqr b dir =
     let reverseSeq = foldl nth [] [1..8]
-    in reverse $ takeWhileOneMore (not . flip occupied b) (reverse reverseSeq)
+    in reverse $ takeWhilePlus1 (not . flip occupied b) (reverse reverseSeq)
     where
         nth xs n =
             case relative n sqr b dir of

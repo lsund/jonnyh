@@ -33,22 +33,11 @@ isPawn :: Piece -> Bool
 isPawn (Piece _ Pawn) = True
 isPawn _              = False
 
--- source :: Color -> Square -> Board -> Maybe Square
--- source c dst b =
---     let
---         dir               = case c of White -> South; Black -> North
---         preceedingSquares = [relative 1 dst b dir, relative 2 dst b dir]
---         preceedingPieces  = filter (isJust . fst) $ map squareToPiece preceedingSquares
---     in
---         fromJust $ map snd <$> filterM (fmap correctPiece <$> fst) preceedingPieces
---     where
---         squareToPiece sqr     = (maybe Nothing (`pieceAt` b) sqr, sqr)
---         correctPiece x = isPawn x && (_color x == White)
 
 source :: Color -> Square -> Board -> Maybe (Square, Piece)
 source c dst b =
     let
-        dir               = case c of White -> South; Black -> North
+        dir               = backwards c
         preceedingSquares = [relative 1 dst b dir, relative 2 dst b dir]
         maybePieces       = map withPiece preceedingSquares
         actualPieces      = foldr accumJust [] maybePieces
@@ -56,5 +45,5 @@ source c dst b =
          find myPawn actualPieces
     where
         withPiece sqr = sqr >>= (\sqr' -> (,) sqr' <$> pieceAt sqr' b)
-        myPawn (_, p) = isPawn p && (_color p == White)
+        myPawn (_, p) = isPawn p && (_color p == c)
 

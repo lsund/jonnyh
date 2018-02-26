@@ -17,7 +17,9 @@ data Type  = Pawn
 data Piece = Piece {
       _color :: Color
     , _type  :: Type
-}
+} deriving (Eq)
+
+
 instance Show Piece where
     show (Piece Black Pawn)   = "p"
     show (Piece Black Bishop) = "b"
