@@ -38,12 +38,11 @@ source :: Color -> Square -> Board -> Maybe (Square, Piece)
 source c dst b =
     let
         dir               = backwards c
-        preceedingSquares = [relative 1 dst b dir, relative 2 dst b dir]
+        preceedingSquares = take 2 $ untilOccupied dst b dir
         maybePieces       = map withPiece preceedingSquares
-        actualPieces      = foldr accumJust [] maybePieces
     in
-         find myPawn actualPieces
+         find myPawn (catMaybes maybePieces)
     where
-        withPiece sqr = sqr >>= (\sqr' -> (,) sqr' <$> pieceAt sqr' b)
+        withPiece sqr = (,) sqr <$> pieceAt sqr b
         myPawn (_, p) = isPawn p && (_color p == c)
 

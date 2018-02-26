@@ -12,6 +12,7 @@ import           JonnyH.Color
 import           JonnyH.Direction
 import           JonnyH.Piece.Common
 import           JonnyH.Square
+import           JonnyH.Util
 
 
 type Position = Map Square Piece
@@ -96,22 +97,19 @@ neighbor = relative 1
 
 neighborIfOccupied :: Square -> Board -> Direction -> Maybe Square
 neighborIfOccupied sqr b dir =
-    neighbor sqr b dir >>= returnIf (`occupied` b)
-    where
-        returnIf p v = if p v then return v else empty
+    mfilter (`occupied` b) (neighbor sqr b dir)
 
 
 neighborIfNotOccupied :: Square -> Board -> Direction -> Maybe Square
 neighborIfNotOccupied sqr b dir =
-    neighbor sqr b dir >>= returnIf (not . flip occupied b)
-    where
-        returnIf p v = if p v then return v else empty
+     mfilter (not . flip occupied b) (neighbor sqr b dir)
 
 
+-- NOTE: Was originally reverse takeWhilePlus1
 untilOccupied :: Square -> Board -> Direction -> [Square]
 untilOccupied sqr b dir =
     let reverseSeq = foldl nth [] [1..8]
-    in reverse $ takeWhilePlus1 (not . flip occupied b) (reverse reverseSeq)
+    in takeWhilePlus1 (not . flip occupied b) (reverse reverseSeq)
     where
         nth xs n =
             case relative n sqr b dir of
