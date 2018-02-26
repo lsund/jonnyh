@@ -1,9 +1,12 @@
 
 module Test.Moves where
 
+import           Data.Set            (fromList)
+import           Protolude
 import           Test.HUnit
 
 import           JonnyH.Board
+import           JonnyH.Piece.Bishop as Bishop
 import           JonnyH.Piece.Knight as Knight
 import           JonnyH.Square
 
@@ -17,5 +20,11 @@ testKnight = TestCase
                     (Knight.moves (Square 'c' 5) p1)
                     m1)
 
-tests = TestList [testKnight, testPawn]
+testBishop = TestCase
+                (assertEqual
+                    "A bishop can move to the correct positions"
+                    (fromList (Bishop.moves (Square 'c' 5) p2))
+                    (fromList m2))
+
+tests = TestList [testBishop, testKnight, testPawn]
 

@@ -25,3 +25,24 @@ m1 = [ Square 'd' 7
      , Square 'a' 6
      , Square 'a' 4
      ]
+
+
+p2 :: Board
+p2 = board $ fromList
+    [
+      (Square 'c' 5, Piece Black Bishop)
+    , (Square 'f' 2, Piece White Pawn)
+    ]
+
+m2 = [ Square 'd' 4
+     , Square 'e' 3
+     , Square 'f' 2
+     , Square 'b' 6
+     , Square 'a' 7
+     , Square 'b' 4
+     , Square 'a' 3
+     , Square 'd' 6
+     , Square 'e' 7
+     , Square 'f' 8
+     ]
+
