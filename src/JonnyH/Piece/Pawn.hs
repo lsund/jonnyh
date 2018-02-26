@@ -10,6 +10,7 @@ import           JonnyH.Color
 import           JonnyH.Direction
 import           JonnyH.Piece.Common
 import           JonnyH.Square
+import           JonnyH.Util
 
 
 moves :: Square -> Color -> Board -> [Square]
@@ -33,15 +34,27 @@ isPawn (Piece _ Pawn) = True
 isPawn _              = False
 
 -- source :: Color -> Square -> Board -> Maybe Square
+-- source c dst b =
+--     let
+--         dir               = case c of White -> South; Black -> North
+--         preceedingSquares = [relative 1 dst b dir, relative 2 dst b dir]
+--         preceedingPieces  = filter (isJust . fst) $ map squareToPiece preceedingSquares
+--     in
+--         fromJust $ map snd <$> filterM (fmap correctPiece <$> fst) preceedingPieces
+--     where
+--         squareToPiece sqr     = (maybe Nothing (`pieceAt` b) sqr, sqr)
+--         correctPiece x = isPawn x && (_color x == White)
+
+source :: Color -> Square -> Board -> Maybe (Square, Piece)
 source c dst b =
     let
         dir               = case c of White -> South; Black -> North
         preceedingSquares = [relative 1 dst b dir, relative 2 dst b dir]
-        preceedingPieces  = filter (isJust . fst) $ map squareToPiece preceedingSquares
+        maybePieces       = map withPiece preceedingSquares
+        actualPieces      = foldr accumJust [] maybePieces
     in
-        fromJust $ map snd <$> filterM (fmap correctPiece <$> fst) preceedingPieces
+         find myPawn actualPieces
     where
-        squareToPiece sqr     = (maybe Nothing (`pieceAt` b) sqr, sqr)
-        correctPiece x = isPawn x && (_color x == White)
-
+        withPiece sqr = sqr >>= (\sqr' -> (,) sqr' <$> pieceAt sqr' b)
+        myPawn (_, p) = isPawn p && (_color p == White)
 
