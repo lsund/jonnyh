@@ -91,6 +91,10 @@ relative n (Square f r) _ dir =
             NorthWest -> (nWest, nNorth)
 
 
+-------------------------------------------------------------------------------
+-- Neighbor
+
+
 neighbor :: Square -> Board -> Direction -> Maybe Square
 neighbor = relative 1
 
