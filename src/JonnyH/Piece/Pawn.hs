@@ -12,17 +12,19 @@ import           JonnyH.Square
 
 
 moves :: Square -> Color -> Board -> [Square]
-moves sqr c b = catMaybes $ zipWith ($) nbs (dirs c) ++ [doubleMove sqr c]
+moves sqr c b = catMaybes $ neighbours ++ [doubleMove sqr c]
     where
         dirs White = [North, NorthWest, NorthEast]
         dirs Black = [South, SouthWest, SouthEast]
         nbfns      = [neighbor , neighborIfOccupied, neighborIfOccupied]
-        nbs        = map (($ b) . ($ sqr)) nbfns
+        neighbours = zipWith ($) (map (($ b) . ($ sqr)) nbfns) (dirs c)
+
 
 doubleMove :: Square -> Color -> Maybe Square
 doubleMove (Square f 2) White = Just $ Square f 4
 doubleMove (Square f 7) Black = Just $ Square f 5
 doubleMove _ _                = Nothing
+
 
 isPawn :: Piece -> Bool
 isPawn (Piece _ Pawn) = True
