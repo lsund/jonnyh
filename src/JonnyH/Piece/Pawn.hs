@@ -1,7 +1,6 @@
 
 module JonnyH.Piece.Pawn where
 
-import           Control.Monad.Extra
 import           Data.Maybe
 import           Protolude
 
@@ -10,24 +9,20 @@ import           JonnyH.Color
 import           JonnyH.Direction
 import           JonnyH.Piece.Common
 import           JonnyH.Square
-import           JonnyH.Util
 
 
 moves :: Square -> Color -> Board -> [Square]
-moves sqr@(Square f r) White b =
-        catMaybes $
-            [   neighbor sqr b North
-            ,   neighborIfOccupied sqr b NorthWest
-            ,   neighborIfOccupied sqr b NorthEast
-            ]
-            ++ if r == 2 then [Just $ Square f 4 | _rank sqr == 2] else []
-moves sqr@(Square f r) Black b =
-        catMaybes $
-            [   neighbor sqr b South
-            ,   neighborIfOccupied sqr b SouthWest
-            ,   neighborIfOccupied sqr b SouthEast
-            ]
-            ++ if r == 7 then [Just $ Square f 5 | _rank sqr == 7] else []
+moves sqr c b = catMaybes $ zipWith ($) nbs (dirs c) ++ [doubleMove sqr c]
+    where
+        dirs White = [North, NorthWest, NorthEast]
+        dirs Black = [South, SouthWest, SouthEast]
+        nbfns      = [neighbor , neighborIfOccupied, neighborIfOccupied]
+        nbs        = map (($ b) . ($ sqr)) nbfns
+
+doubleMove :: Square -> Color -> Maybe Square
+doubleMove (Square f 2) White = Just $ Square f 4
+doubleMove (Square f 7) Black = Just $ Square f 5
+doubleMove _ _                = Nothing
 
 isPawn :: Piece -> Bool
 isPawn (Piece _ Pawn) = True

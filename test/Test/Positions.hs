@@ -46,3 +46,27 @@ m2 = [ Square 'd' 4
      , Square 'f' 8
      ]
 
+p3 :: Board
+p3 = board $ fromList
+    [
+      (Square 'c' 5, Piece White Pawn)
+    , (Square 'd' 6, Piece Black Queen)
+    ]
+
+
+m3 = [ Square 'c' 6
+     , Square 'd' 6
+     ]
+
+p4 :: Board
+p4 = board $ fromList
+    [
+      (Square 'd' 2, Piece White Pawn)
+    , (Square 'c' 3, Piece Black Queen)
+    ]
+
+
+m4 = [ Square 'd' 3
+     , Square 'd' 4
+     , Square 'c' 3
+     ]
