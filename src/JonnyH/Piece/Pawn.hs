@@ -31,14 +31,14 @@ isPawn (Piece _ Pawn) = True
 isPawn _              = False
 
 
-source :: Color -> Square -> Board -> Maybe (Square, Piece)
+source :: Color -> Square -> Board -> Maybe Square
 source c dst b =
     let
         dir               = backwards c
         preceedingSquares = take 2 $ untilOccupied dst b dir
         maybePieces       = map withPiece preceedingSquares
     in
-         find myPawn (catMaybes maybePieces)
+         fst <$> find myPawn (catMaybes maybePieces)
     where
         withPiece sqr = (,) sqr <$> pieceAt sqr b
         myPawn (_, p) = isPawn p && (_color p == c)
