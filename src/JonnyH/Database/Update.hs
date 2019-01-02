@@ -7,7 +7,7 @@ import           Database.PostgreSQL.Simple
 import           JonnyH.Database.Common
 import           JonnyH.Database.Query
 import           PGNParser.Data.Metadata
-import           PGNParser.Data.MoveText
+import           PGNParser.Data.Move
 import           PGNParser.PGNParser
 
 insertMeta :: Connection -> Metadata -> IO Int64
@@ -31,7 +31,7 @@ insertMeta conn dat =
                  , (tagValue . _eco) dat
                  )
 
-insertMoves :: Connection -> Int -> [MoveText] -> IO Int64
+insertMoves :: Connection -> Int -> [PGNMove] -> IO Int64
 insertMoves conn i dat =
     executeMany conn q values
     where

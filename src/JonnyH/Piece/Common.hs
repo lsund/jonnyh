@@ -5,6 +5,10 @@ import           GHC.Show
 import           Protolude    hiding (Type)
 
 import           JonnyH.Color
+import           PGNParser.Data.Move
+
+type PGNMove =  PGNParser.Data.Move.Move
+
 
 data Type  = Pawn
            | Bishop

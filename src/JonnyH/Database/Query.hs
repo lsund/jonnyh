@@ -8,30 +8,30 @@ import           Protolude                  hiding (toList)
 
 import           JonnyH.Database.Common
 import           JonnyH.Color
-import           PGNParser.Data.MoveText
+import           PGNParser.Data.Move
 
 maxId :: Connection -> IO Int
 maxId conn = do
     (Only x : _) <- query_ conn "select max(id) from game" :: IO [Only Int]
     return x
 
-queryMove :: Connection -> Query -> MoveText -> IO [Only Int]
+queryMove :: Connection -> Query -> PGNMove -> IO [Only Int]
 queryMove conn q (Move n w b) = query conn q (n, w, b)
 queryMove _ _ _               = return []
 
-gamesWithMove :: Connection -> MoveText -> IO (Set Int)
+gamesWithMove :: Connection -> PGNMove -> IO (Set Int)
 gamesWithMove conn move = do
     let q = "select gameid from move where movenumber=? and white=? and black=?"
     xs <- queryMove conn q move
     return $ fromList $ map fromOnly xs
 
 
-gamesWithMoveSequence :: Connection -> [MoveText] -> IO (Set Int)
+gamesWithMoveSequence :: Connection -> [PGNMove] -> IO (Set Int)
 gamesWithMoveSequence conn moves = do
     games <- mapM (gamesWithMove conn) moves
     return $ foldr1 intersection games
 
-response :: [MoveText] -> Color -> Int -> IO [(Text, Int)]
+response :: [PGNMove] -> Color -> Int -> IO [(Text, Int)]
 response moves color n = do
     conn <- makeConnection
     g <- gamesWithMoveSequence conn moves

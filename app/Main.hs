@@ -11,11 +11,11 @@ import           JonnyH.Color
 -- import           JonnyH.Positions
 import JonnyH.Database.Update as Database.Update
 import JonnyH.Database.Query as Database.Query
+import           PGNParser.PGNParser
 
-import           PGNParser.Data.MoveText
+import           PGNParser.Data.Move
 
-dummyMoves = [ Move 1 "d4" "d5"
-             ]
+dummyMoves = [Move 1 "d4" "d5"]
 
 main :: IO ()
 main = do

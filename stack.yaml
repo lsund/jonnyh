@@ -18,5 +18,5 @@ packages:
 #
 extra-deps:
     - git: git@github.com:lsund/pgn-parser.git
-      commit: 04fc4a966452c3a4532e319916b7f79ef0b6c03e
+      commit: bb6a6b1c6fced16f43aa53aa58104a5b34e1f318
 
