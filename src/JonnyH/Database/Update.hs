@@ -47,11 +47,14 @@ insertGame conn (Game meta moves) = do
     _ <- insertMoves conn i moves
     return ()
 
-populate :: IO ()
-populate = do
+populateFromFile :: FilePath -> IO ()
+populateFromFile fname = do
     conn <- makeConnection
-    Right gs <- parseFile "resources/pgn/QGDOrthoMain.pgn"
-    mapM_ (insertGame conn) gs
-    return ()
+    parseResult <- parseFile fname
+    case parseResult of
+        Right gs -> do
+            mapM_ (insertGame conn) gs
+            putStrLn $ "Successfully imported " ++ fname ++ "to database"
+        Left err -> print err
 
 

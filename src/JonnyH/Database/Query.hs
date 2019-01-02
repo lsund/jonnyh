@@ -7,6 +7,7 @@ import           Database.PostgreSQL.Simple
 import           Protolude                  hiding (toList)
 
 import           JonnyH.Database.Common
+import           JonnyH.Color
 import           PGNParser.Data.MoveText
 
 maxId :: Connection -> IO Int
@@ -30,23 +31,17 @@ gamesWithMoveSequence conn moves = do
     games <- mapM (gamesWithMove conn) moves
     return $ foldr1 intersection games
 
-dummy = [ Move 1 "d4" "d5"
-        , Move 2 "c4" "e6"
-        , Move 3 "Nc3" "Nf6"
-        , Move 4 "Bg5" "Be7"
-        , Move 5 "e3" "h6"
-        , Move 6 "Bh4" "O-O"
-        , Move 7 "Rc1" "b6"
-        ]
-
--- assuming white to play
-respond moves color n = do
+response :: [MoveText] -> Color -> Int -> IO [(Text, Int)]
+response moves color n = do
     conn <- makeConnection
-    g <- gamesWithMoveSequence conn dummy
-    let q = "select white,count(white) \
-            \from move \
-            \where gameid in ? and movenumber=? group by white"
+    g <- gamesWithMoveSequence conn moves
+    let q = case color of
+                White ->"select white,count(white) \
+                        \from move \
+                        \where gameid in ? and movenumber=? group by white"
+                Black ->"select black,count(black) \
+                        \from move \
+                        \where gameid in ? and movenumber=? group by black"
         params = (In (toList g), n)
-    res <- query conn q params :: IO [(Text, Int)]
-    print res
+    query conn q params :: IO [(Text, Int)]
 
