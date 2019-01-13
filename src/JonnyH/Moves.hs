@@ -15,8 +15,8 @@ import           JonnyH.Piece.Queen  as Queen
 import           JonnyH.Piece.Rook   as Rook
 import           JonnyH.Square
 
-movesFrom :: Board -> Square -> [Square]
-movesFrom b sqr =
+reachableFrom :: Board -> Square -> [Square]
+reachableFrom b sqr =
     case Map.lookup sqr $ _position b of
         Just (Piece col pce) ->
             notOccupiedBy col b $ case pce of
@@ -29,11 +29,11 @@ movesFrom b sqr =
         Nothing             -> []
 
 
-allMoves :: Color -> Board -> [(Square, Square)]
+allMoves :: Color -> Board -> [Move]
 allMoves col b = concatMap (\(y, ys) -> zip (repeat y) ys) allMovesFrom
     where
         filteredMap = Map.filter (ofColor col) $ _position b
         filteredSquares = Map.keys filteredMap
         ofColor col'' (Piece col' _) = col'' == col'
-        allMovesFrom = zip filteredSquares $ map (movesFrom b) filteredSquares
+        allMovesFrom = zip filteredSquares $ map (reachableFrom b) filteredSquares
 

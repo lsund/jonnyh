@@ -27,6 +27,7 @@ dependencies:
 - pgn-parser
 - HUnit
 - extra
+- random
 
 default-extensions:
     - NoImplicitPrelude

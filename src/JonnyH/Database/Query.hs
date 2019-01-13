@@ -5,10 +5,14 @@ import           Data.List                  (foldr1)
 import           Data.Set                   hiding (map)
 import           Database.PostgreSQL.Simple
 import           Protolude                  hiding (toList)
+import           System.Random
 
 import           JonnyH.Database.Common
 import           JonnyH.Color
+import           JonnyH.Util
 import           PGNParser.Data.Move
+
+type PGNMove =  PGNParser.Data.Move.Move
 
 maxId :: Connection -> IO Int
 maxId conn = do
@@ -31,8 +35,8 @@ gamesWithMoveSequence conn moves = do
     games <- mapM (gamesWithMove conn) moves
     return $ foldr1 intersection games
 
-response :: [PGNMove] -> Color -> Int -> IO [(Text, Int)]
-response moves color n = do
+response :: [PGNMove] -> Color -> Int -> IO [(Text, Double)]
+response moves color moveNumber = do
     conn <- makeConnection
     g <- gamesWithMoveSequence conn moves
     let q = case color of
@@ -42,6 +46,7 @@ response moves color n = do
                 Black ->"select black,count(black) \
                         \from move \
                         \where gameid in ? and movenumber=? group by black"
-        params = (In (toList g), n)
-    query conn q params :: IO [(Text, Int)]
+        params = (In (toList g), moveNumber)
+    res <- query conn q params :: IO [(Text, Int)]
+    return $ applyToSnds normalize res
 
