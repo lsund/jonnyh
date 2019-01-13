@@ -1,7 +1,7 @@
 
 module JonnyH.Database.Query where
 
-import           Data.List                  (foldr1)
+import           Data.List                  (foldr1, last)
 import           Data.Set                   hiding (map)
 import           Database.PostgreSQL.Simple
 import           Protolude                  hiding (toList)
@@ -42,10 +42,13 @@ randomMove r xs =
         [] -> Nothing
         y : _ -> Just y
 
-response :: [PGNMove] -> Color -> Int -> IO (Maybe (Text, Double))
-response moves color moveNumber = do
-    conn <- makeConnection
-    g <- gamesWithMoveSequence conn moves
+nextMoveNumber :: [PGNMove] -> Maybe Int
+nextMoveNumber =  (succ . last  <$>) . maybeEmptyList . map moveNumber
+    where moveNumber (Move n _ _) = n
+          moveNumber _ = -1
+
+doQuery :: Connection -> Set Int -> Maybe Int -> Color -> IO (Maybe (Text, Double))
+doQuery conn games moveNumber color = do
     let q = case color of
                 White ->"select white,count(white) \
                         \from move \
@@ -53,7 +56,13 @@ response moves color moveNumber = do
                 Black ->"select black,count(black) \
                         \from move \
                         \where gameid in ? and movenumber=? group by black"
-        params = (In (toList g), moveNumber)
+        params = (In (toList games), moveNumber)
     res <- query conn q params :: IO [(Text, Int)]
     r <- randomRIO (0.0, 1.0) :: IO Double
     return $ randomMove r res
+
+response :: [PGNMove] -> Color -> IO (Maybe (Text, Double))
+response moves color = do
+    conn <- makeConnection
+    games <- gamesWithMoveSequence conn moves
+    doQuery conn games color (nextMoveNumber moves)

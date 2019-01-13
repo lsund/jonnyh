@@ -16,11 +16,11 @@ import System.Random
 
 import           PGNParser.Data.Move
 
-dummyMoves = [Move 1 "d4" "d5", Move 2 "c4" "e6"]
+dummyMoves = [Move 1 "d4" "d5", Move 2 "c4" "e6", Move 3 "Nc3" "Nf6"]
 
 main :: IO ()
 main = do
-    xs <- Database.Query.response dummyMoves Black (3 :: Int)
+    xs <- Database.Query.response dummyMoves Black
     print xs
 
     -- let b' = update initialBoard (Square 'd' 2, Square 'd' 4)

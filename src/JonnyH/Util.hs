@@ -21,3 +21,8 @@ distributionRange xs =
 
 applyToSnds :: ([b] -> [c]) -> [(a, b)] -> [(a, c)]
 applyToSnds f xs = zip (map fst xs) (f (map snd xs))
+
+maybeEmptyList :: [a] -> Maybe [a]
+maybeEmptyList [] = Nothing
+maybeEmptyList xs = Just xs
+
