@@ -35,7 +35,14 @@ gamesWithMoveSequence conn moves = do
     games <- mapM (gamesWithMove conn) moves
     return $ foldr1 intersection games
 
-response :: [PGNMove] -> Color -> Int -> IO [(Text, Double)]
+randomMove :: Double -> [(Text, Int)] -> Maybe (Text, Double)
+randomMove _ [] = Nothing
+randomMove r xs =
+    case dropWhile (\(_, y) -> r > y) (applyToSnds normalize xs) of
+        [] -> Nothing
+        y : _ -> Just y
+
+response :: [PGNMove] -> Color -> Int -> IO (Maybe (Text, Double))
 response moves color moveNumber = do
     conn <- makeConnection
     g <- gamesWithMoveSequence conn moves
@@ -48,5 +55,5 @@ response moves color moveNumber = do
                         \where gameid in ? and movenumber=? group by black"
         params = (In (toList g), moveNumber)
     res <- query conn q params :: IO [(Text, Int)]
-    return $ applyToSnds normalize res
-
+    r <- randomRIO (0.0, 1.0) :: IO Double
+    return $ randomMove r res

@@ -12,14 +12,15 @@ import           JonnyH.Color
 import JonnyH.Database.Update as Database.Update
 import JonnyH.Database.Query as Database.Query
 import           PGNParser.PGNParser
+import System.Random
 
 import           PGNParser.Data.Move
 
-dummyMoves = [Move 1 "d4" "d5"]
+dummyMoves = [Move 1 "d4" "d5", Move 2 "c4" "e6"]
 
 main :: IO ()
 main = do
-    xs <- Database.Query.response dummyMoves Black (2 :: Int)
+    xs <- Database.Query.response dummyMoves Black (3 :: Int)
     print xs
 
     -- let b' = update initialBoard (Square 'd' 2, Square 'd' 4)
