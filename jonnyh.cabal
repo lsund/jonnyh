@@ -2,7 +2,7 @@
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: fa566e54c2fdd5042d26028d27df55abc36e7d5f99179130718f3f81b0793362
+-- hash: 7f1561d829577c1c944e5b1880e3a008399d3ad851126746375b0e0e8e731436
 
 name:           jonnyh
 version:        0.2.0.0
@@ -43,6 +43,7 @@ library
       JonnyH.Piece.Pawn
       JonnyH.Piece.Queen
       JonnyH.Piece.Rook
+      JonnyH.Ply
       JonnyH.Square
       JonnyH.Types
       JonnyH.Update

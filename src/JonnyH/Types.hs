@@ -8,3 +8,4 @@ type Position = Map Square Piece
 
 type Movement = (Square, Square)
 
+-- type Turn = (Int, (Ply, Ply))

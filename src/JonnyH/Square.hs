@@ -11,4 +11,3 @@ data Square = Square {
 
 instance Show Square where
     show (Square f r) = f : [intToDigit r]
-

@@ -9,14 +9,25 @@ import Text.Parsec.Prim                 hiding  (try)
 import PGNParser.Data.Metadata
 import PGNParser.Data.Move
 
+import qualified JonnyH.Ply as Ply (Ply(..))
+import JonnyH.Square
+import JonnyH.Piece.Common
+import qualified JonnyH.Color as Color
 
 type PGNParser u = ParsecT String u Identity
 
 data Game = Game Metadata [Move]
 
+parsePly :: PGNParser u Ply.Ply
+parsePly = do
+    piece <- oneOf "NBRQK"
+    capture <- char 'x'
+    file <- oneOf "abcdefgh"
+    rank <- oneOf "12345678"
+    return $ Ply.Move (Piece Color.White Knight) (Square file 1)
 
-parseSingleMove :: PGNParser u String
-parseSingleMove = many1 (oneOf "abcdefgh12345678NBRQKxOO+-=")
+parseSingleMove =
+    many1 (oneOf "abcdefgh12345678NBRQKxOO+-=")
 
 
 parseMove :: PGNParser u Move
@@ -26,6 +37,7 @@ parseMove = do
     w <- parseSingleMove
     _ <- space
     b <- option "" parseSingleMove
+    -- return $ ((read n :: Int), w b)
     return $ Move (read n :: Int) w b
 
 
