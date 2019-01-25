@@ -2,7 +2,7 @@
 module JonnyH.Board where
 
 import qualified Data.List           as List
-import           Data.Map            (Map, elems, lookup)
+import           Data.Map            (elems, lookup)
 import           GHC.Show
 import           Prelude             ((!!))
 import           Protolude           hiding (Map, evaluate, show)
@@ -13,11 +13,7 @@ import           JonnyH.Direction
 import           JonnyH.Piece.Common
 import           JonnyH.Square
 import           JonnyH.Util
-
-
-type Position = Map Square Piece
-
-type Movement = (Square, Square)
+import           JonnyH.Types
 
 data Board = Board {
       _squares  :: [Square]

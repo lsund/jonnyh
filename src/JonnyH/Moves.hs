@@ -15,6 +15,8 @@ import           JonnyH.Piece.Queen  as Queen
 import           JonnyH.Piece.Rook   as Rook
 import           JonnyH.Square
 
+import           JonnyH.Types
+
 reachableFrom :: Board -> Square -> [Square]
 reachableFrom b sqr =
     case Map.lookup sqr $ _position b of

@@ -6,9 +6,10 @@ import qualified Data.Map            as Map
 import           Protolude
 
 import           JonnyH.Board
-import           JonnyH.Square
 import           JonnyH.Color
 import           JonnyH.Piece.Common
+import           JonnyH.Square
+import           JonnyH.Types
 
 initialBoard :: Board
 initialBoard = board initialPosition

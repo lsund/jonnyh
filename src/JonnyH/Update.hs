@@ -9,7 +9,7 @@ import           Protolude
 import           JonnyH.Board
 import           JonnyH.Color
 import           JonnyH.Moves
-
+import           JonnyH.Types
 
 update :: Board -> Movement -> Board
 update brd (src, dst) = board $ (delete src >>> delete dst >>> insert dst pce) pos
