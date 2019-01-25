@@ -15,8 +15,3 @@ resolver: lts-10.5
 #
 packages:
 - .
-#
-extra-deps:
-    - git: git@github.com:lsund/pgn-parser.git
-      commit: bb6a6b1c6fced16f43aa53aa58104a5b34e1f318
-

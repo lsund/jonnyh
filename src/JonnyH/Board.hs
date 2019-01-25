@@ -17,7 +17,7 @@ import           JonnyH.Util
 
 type Position = Map Square Piece
 
-type Move = (Square, Square)
+type Movement = (Square, Square)
 
 data Board = Board {
       _squares  :: [Square]

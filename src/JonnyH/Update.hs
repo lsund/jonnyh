@@ -11,7 +11,7 @@ import           JonnyH.Color
 import           JonnyH.Moves
 
 
-update :: Board -> Move -> Board
+update :: Board -> Movement -> Board
 update brd (src, dst) = board $ (delete src >>> delete dst >>> insert dst pce) pos
     where
         pce = fromJust $ pieceAt src brd

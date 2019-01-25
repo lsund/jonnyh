@@ -29,7 +29,7 @@ reachableFrom b sqr =
         Nothing             -> []
 
 
-allMoves :: Color -> Board -> [Move]
+allMoves :: Color -> Board -> [Movement]
 allMoves col b = concatMap (\(y, ys) -> zip (repeat y) ys) allMovesFrom
     where
         filteredMap = Map.filter (ofColor col) $ _position b
